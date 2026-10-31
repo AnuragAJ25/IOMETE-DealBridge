@@ -9,6 +9,7 @@ import { SectionHeader } from "@/components/common/SectionHeader";
 import { FeatureCard } from "@/components/common/FeatureCard";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { AISalesPrepBrief } from "@/components/dashboard/AISalesPrepBrief";
 import {
   Building2,
   Users,
@@ -132,6 +133,9 @@ export default function DashboardPage() {
           <div className="text-xs text-slate-500 mt-1">78% Win Probability • 14d to close</div>
         </motion.div>
       </div>
+
+      {/* AI Sales Strategy Brief */}
+      <AISalesPrepBrief />
 
       {/* Main Grid: Account Snapshot & Meeting Checklist */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

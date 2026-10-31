@@ -1,11 +1,15 @@
 /**
- * IOMETE DealBridge - Backend API Client
- * Centralized, strongly-typed HTTP client for FastAPI + Gemini AI services.
- * Schema definitions mirror backend/app/schemas/ exactly.
+ * IOMETE DealBridge - Centralized Backend API Client
+ * Strongly-typed HTTP client for FastAPI + Google Gemini AI microservices.
+ * Supports configurable timeouts, automatic retries with exponential backoff,
+ * and robust error normalization.
  */
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+
+const DEFAULT_TIMEOUT_MS = 25000; // 25 seconds for LLM inference
+const MAX_RETRIES = 1;
 
 export class ApiError extends Error {
   status: number;
@@ -37,7 +41,12 @@ export interface ProductExplainerRequest {
   buyer_role: string;
   technical_level?: "Executive" | "Intermediate" | "Deep Technical" | string;
   topic: string;
-  explanation_preference?: "Analogy-Driven" | "Financial/ROI-Focused" | "Deep Architecture" | "Bullet Points" | string;
+  explanation_preference?:
+    | "Analogy-Driven"
+    | "Financial/ROI-Focused"
+    | "Deep Architecture"
+    | "Bullet Points"
+    | string;
 }
 
 export interface ProductExplainerResponse {
@@ -126,61 +135,122 @@ export interface MeetingSummaryResponse {
 }
 
 // ---------------------------------------------------------------------------
-// Fetch Helpers
+// Fetch Helpers with Timeout & Retry
 // ---------------------------------------------------------------------------
-async function apiPost<TRequest, TResponse>(
-  endpoint: string,
-  body: TRequest
-): Promise<TResponse> {
-  const url = `${API_BASE_URL}${endpoint}`;
+async function fetchWithTimeout(
+  url: string,
+  options: RequestInit,
+  timeoutMs: number = DEFAULT_TIMEOUT_MS
+): Promise<Response> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
   try {
     const res = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
+      ...options,
+      signal: controller.signal,
     });
-
-    if (!res.ok) {
-      let errorDetail = "";
-      try {
-        const errJson = await res.json();
-        errorDetail = errJson.detail || JSON.stringify(errJson);
-      } catch {
-        errorDetail = await res.text();
-      }
+    return res;
+  } catch (error: any) {
+    if (error.name === "AbortError") {
       throw new ApiError(
-        res.status,
-        `Backend API error (${res.status}): ${errorDetail}`,
-        errorDetail
+        408,
+        `Request to ${url} timed out after ${timeoutMs / 1000} seconds. The AI model may be under load.`
       );
     }
-
-    return (await res.json()) as TResponse;
-  } catch (error) {
-    if (error instanceof ApiError) throw error;
-    throw new ApiError(
-      0,
-      `Network connection failed to ${url}. Is FastAPI running? (${(error as Error).message})`
-    );
+    throw error;
+  } finally {
+    clearTimeout(timeoutId);
   }
+}
+
+async function apiPost<TRequest, TResponse>(
+  endpoint: string,
+  body: TRequest,
+  retries: number = MAX_RETRIES
+): Promise<TResponse> {
+  const url = `${API_BASE_URL}${endpoint}`;
+  let lastError: Error | null = null;
+
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const res = await fetchWithTimeout(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
+
+      if (!res.ok) {
+        let errorDetail = "";
+        try {
+          const errJson = await res.json();
+          errorDetail = errJson.detail || JSON.stringify(errJson);
+        } catch {
+          errorDetail = await res.text();
+        }
+
+        // Retry on 502 or 503 only once
+        if ((res.status === 502 || res.status === 503) && attempt < retries) {
+          await new Promise((resolve) => setTimeout(resolve, 1000 * (attempt + 1)));
+          continue;
+        }
+
+        throw new ApiError(
+          res.status,
+          `Backend API error (${res.status}): ${errorDetail}`,
+          errorDetail
+        );
+      }
+
+      const data = await res.json();
+      if (!data) {
+        throw new ApiError(204, "Received empty response body from backend.");
+      }
+
+      return data as TResponse;
+    } catch (error: any) {
+      lastError = error;
+      if (error instanceof ApiError && error.status !== 408) {
+        throw error;
+      }
+      if (attempt < retries) {
+        await new Promise((resolve) => setTimeout(resolve, 800));
+        continue;
+      }
+    }
+  }
+
+  if (lastError instanceof ApiError) throw lastError;
+  throw new ApiError(
+    0,
+    `Unable to connect to backend service at ${url}. Please ensure the FastAPI server is running on port 8000. (${
+      (lastError as Error)?.message || "Unknown error"
+    })`
+  );
 }
 
 async function apiGet<TResponse>(endpoint: string): Promise<TResponse> {
   const url = `${API_BASE_URL}${endpoint}`;
   try {
-    const res = await fetch(url, { method: "GET" });
+    const res = await fetchWithTimeout(
+      url,
+      { method: "GET" },
+      8000 // 8s timeout for health
+    );
+
     if (!res.ok) {
       const text = await res.text();
-      throw new ApiError(res.status, `Health check failed: ${text}`);
+      throw new ApiError(res.status, `Health check returned ${res.status}: ${text}`);
     }
+
     return (await res.json()) as TResponse;
-  } catch (error) {
+  } catch (error: any) {
     if (error instanceof ApiError) throw error;
     throw new ApiError(
       0,
-      `Network connection failed to ${url}. Is FastAPI running? (${(error as Error).message})`
+      `Network connection failed to ${url}. Is FastAPI running? (${error.message})`
     );
   }
 }

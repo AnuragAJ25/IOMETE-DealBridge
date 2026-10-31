@@ -8,6 +8,7 @@ import { SectionHeader } from "@/components/common/SectionHeader";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import confetti from "canvas-confetti";
+import { AIMeetingSummaryGenerator } from "@/components/summary/AIMeetingSummaryGenerator";
 import {
   FileCheck,
   CheckCircle2,
@@ -141,6 +142,9 @@ export default function MeetingSummaryPage() {
           </div>
         </div>
       </div>
+
+      {/* Grounded AI Executive Meeting Summary Copilot */}
+      <AIMeetingSummaryGenerator />
 
       {/* Main Grid: Mutual Action Plan (MAP) & Logged Questions Addressed */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">

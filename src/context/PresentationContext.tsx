@@ -95,19 +95,39 @@ export const PRESENTATION_STAGES: PresentationStage[] = [
   },
 ];
 
+export interface BusinessCaseInputs {
+  currentInfraCost: number;
+  currentOperationalCost: number;
+  workloadGrowthPercent: number;
+  proposedPlatformCost: number;
+  proposedOperationalCost: number;
+}
+
+export interface DemoConfig {
+  industry: string;
+  scenarioId: string;
+  includeIcebergDeepDive: boolean;
+}
+
 export interface SessionData {
   buyerCompany: string;
   buyerName: string;
   buyerRole: string;
+  industry: string;
   currentWarehouse: string;
   dataSizeTB: number;
   monthlyCloudSpend: number;
   activeAnalysts: number;
   notes: string[];
+  sellerNotes: string;
   bookmarkedQuestions: string[];
   deploymentTarget: "aws" | "azure" | "gcp" | "onprem" | "hybrid" | "airgapped";
   selectedRequirements: string[];
   selectedWorkloads: string[];
+  selectedUseCases: string[];
+  demoConfig: DemoConfig;
+  businessCaseInputs: BusinessCaseInputs;
+  currentPresentationSection: string;
 }
 
 interface PresentationContextType {
@@ -135,11 +155,13 @@ const defaultSession: SessionData = {
   buyerCompany: "Northstar FinTech",
   buyerName: "Alex Vance",
   buyerRole: "VP of Data & Infrastructure",
+  industry: "FinTech & Financial Services",
   currentWarehouse: "Snowflake",
   dataSizeTB: 120,
   monthlyCloudSpend: 42000,
   activeAnalysts: 35,
   deploymentTarget: "aws",
+  currentPresentationSection: "use-cases",
   selectedRequirements: [
     "customer_vpc",
     "zero_lockin",
@@ -147,6 +169,24 @@ const defaultSession: SessionData = {
     "subsecond_bi",
   ],
   selectedWorkloads: ["bi_reporting", "lakehouse_etl"],
+  selectedUseCases: [
+    "Warehouse Cost Deflation & Iceberg Migration",
+    "Sub-Second BI Acceleration",
+  ],
+  demoConfig: {
+    industry: "fintech",
+    scenarioId: "fraud_analytics",
+    includeIcebergDeepDive: true,
+  },
+  businessCaseInputs: {
+    currentInfraCost: 36000,
+    currentOperationalCost: 6000,
+    workloadGrowthPercent: 20,
+    proposedPlatformCost: 11500,
+    proposedOperationalCost: 2500,
+  },
+  sellerNotes:
+    "Buyer facing urgent Q4 cost pressures from CFO. Compute credits currently 40% over planned budget. Interested in in-place Iceberg migration without rewriting Tableau reports.",
   notes: [
     "Buyer expressed high urgency around Q4 budget cuts; compute credits 40% over budget.",
     "Interested in Apache Iceberg table format to avoid vendor lock-in.",
@@ -178,10 +218,12 @@ export function PresentationProvider({ children }: { children: React.ReactNode }
     }
   }, [pathname]);
 
-  // Load persisted session from localStorage
+  // Load persisted session from sessionStorage or localStorage
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("iomete_dealbridge_session");
+      const saved =
+        sessionStorage.getItem("iomete_dealbridge_session") ||
+        localStorage.getItem("iomete_dealbridge_session");
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
@@ -190,7 +232,8 @@ export function PresentationProvider({ children }: { children: React.ReactNode }
           // ignore parsing error
         }
       }
-      const savedRole = localStorage.getItem("iomete_dealbridge_role") as "seller" | "buyer";
+      const savedRole = (sessionStorage.getItem("iomete_dealbridge_role") ||
+        localStorage.getItem("iomete_dealbridge_role")) as "seller" | "buyer";
       if (savedRole) {
         setRoleState(savedRole);
       }
@@ -200,6 +243,7 @@ export function PresentationProvider({ children }: { children: React.ReactNode }
   const setRole = (newRole: "seller" | "buyer") => {
     setRoleState(newRole);
     if (typeof window !== "undefined") {
+      sessionStorage.setItem("iomete_dealbridge_role", newRole);
       localStorage.setItem("iomete_dealbridge_role", newRole);
     }
   };
@@ -208,6 +252,7 @@ export function PresentationProvider({ children }: { children: React.ReactNode }
     setSessionData((prev) => {
       const next = { ...prev, ...updates };
       if (typeof window !== "undefined") {
+        sessionStorage.setItem("iomete_dealbridge_session", JSON.stringify(next));
         localStorage.setItem("iomete_dealbridge_session", JSON.stringify(next));
       }
       return next;
@@ -222,6 +267,7 @@ export function PresentationProvider({ children }: { children: React.ReactNode }
         : [...prev.selectedRequirements, reqId];
       const next = { ...prev, selectedRequirements: nextReqs };
       if (typeof window !== "undefined") {
+        sessionStorage.setItem("iomete_dealbridge_session", JSON.stringify(next));
         localStorage.setItem("iomete_dealbridge_session", JSON.stringify(next));
       }
       return next;
