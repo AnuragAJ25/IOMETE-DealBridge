@@ -134,6 +134,16 @@ export function Navbar() {
             </Button>
           </Link>
 
+          {/* Landing page CTA */}
+          {pathname === "/" && (
+            <Link href="/meeting" className="hidden sm:inline-block">
+              <Button variant="primary" size="sm">
+                <MonitorPlay className="h-3.5 w-3.5" />
+                <span>Start Meeting</span>
+              </Button>
+            </Link>
+          )}
+
           {/* Mobile hamburger menu */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

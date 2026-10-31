@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ProductIntroduction } from "@/components/storytelling/ProductIntroduction";
 import Link from "next/link";
 import { usePresentation } from "@/context/PresentationContext";
 import { PageHeader } from "@/components/common/PageHeader";
@@ -56,6 +58,51 @@ export default function LearnPage() {
     },
   ];
 
+  const learningCards = [
+    {
+      icon: <Layers className="h-5 w-5" />,
+      badge: "Primer",
+      badgeVariant: "default" as const,
+      title: "The Apache Iceberg Revolution",
+      description:
+        "Understand why tech giants like Apple, Netflix, and Airbnb transitioned from proprietary warehouses to Iceberg open tables.",
+      bulletPoints: [
+        "Decoupled metadata manifests",
+        "Hidden partition pruning",
+        "Zero proprietary table lock-in",
+      ],
+      actionText: "Read Deep Dive",
+    },
+    {
+      icon: <BookOpen className="h-5 w-5" />,
+      badge: "Economics",
+      badgeVariant: "warning" as const,
+      title: "The Economics of Modern Lakehouses",
+      description:
+        "A financial breakdown of compute markup in Snowflake credits versus transparent serverless execution in customer VPCs.",
+      bulletPoints: [
+        "Eliminating idle warehouse credits",
+        "Predictable flat-rate scaling",
+        "Zero data egress transit fees",
+      ],
+      actionText: "Inspect Math",
+    },
+    {
+      icon: <FileCode className="h-5 w-5" />,
+      badge: "Engineering",
+      badgeVariant: "indigo" as const,
+      title: "Zero-Downtime Migration Blueprint",
+      description:
+        "A proven 3-phase roadmap to transition analytics workloads without disrupting Tableau, Looker, or dbt production pipelines.",
+      bulletPoints: [
+        "Phase 1: Dual-run parallel validation",
+        "Phase 2: In-place Iceberg catalog sync",
+        "Phase 3: Seamless cutover & decommission",
+      ],
+      actionText: "View Blueprint",
+    },
+  ];
+
   return (
     <div className="space-y-8">
       <PageHeader
@@ -75,49 +122,32 @@ export default function LearnPage() {
         }
       />
 
+      {/* Product Introduction Primer */}
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
+        <ProductIntroduction />
+      </motion.div>
+
       {/* 3 Core Learning Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <FeatureCard
-          icon={<Layers className="h-5 w-5" />}
-          badge="Primer"
-          badgeVariant="default"
-          title="The Apache Iceberg Revolution"
-          description="Understand why tech giants like Apple, Netflix, and Airbnb transitioned from proprietary warehouses to Iceberg open tables."
-          bulletPoints={[
-            "Decoupled metadata manifests",
-            "Hidden partition pruning",
-            "Zero proprietary table lock-in",
-          ]}
-          actionText="Read Deep Dive"
-        />
-
-        <FeatureCard
-          icon={<BookOpen className="h-5 w-5" />}
-          badge="Economics"
-          badgeVariant="warning"
-          title="The Economics of Modern Lakehouses"
-          description="A financial breakdown of compute markup in Snowflake credits versus transparent serverless execution in customer VPCs."
-          bulletPoints={[
-            "Eliminating idle warehouse credits",
-            "Predictable flat-rate scaling",
-            "Zero data egress transit fees",
-          ]}
-          actionText="Inspect Math"
-        />
-
-        <FeatureCard
-          icon={<FileCode className="h-5 w-5" />}
-          badge="Engineering"
-          badgeVariant="indigo"
-          title="Zero-Downtime Migration Blueprint"
-          description="A proven 3-phase roadmap to transition analytics workloads without disrupting Tableau, Looker, or dbt production pipelines."
-          bulletPoints={[
-            "Phase 1: Dual-run parallel validation",
-            "Phase 2: In-place Iceberg catalog sync",
-            "Phase 3: Seamless cutover & decommission",
-          ]}
-          actionText="View Blueprint"
-        />
+        {learningCards.map((card, idx) => (
+          <motion.div
+            key={idx}
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.35, delay: idx * 0.1 }}
+          >
+            <FeatureCard
+              icon={card.icon}
+              badge={card.badge}
+              badgeVariant={card.badgeVariant}
+              title={card.title}
+              description={card.description}
+              bulletPoints={card.bulletPoints}
+              actionText={card.actionText}
+            />
+          </motion.div>
+        ))}
       </div>
 
       {/* Technical FAQ Accordion */}
@@ -163,11 +193,21 @@ export default function LearnPage() {
                   )}
                 </button>
 
-                {isOpen && (
-                  <div className="p-4 bg-slate-50/70 border-t border-slate-100 text-xs sm:text-sm text-slate-600 leading-relaxed animate-in fade-in-50 duration-150">
-                    {faq.a}
-                  </div>
-                )}
+                <AnimatePresence>
+                  {isOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2, ease: "easeInOut" }}
+                      className="overflow-hidden"
+                    >
+                      <div className="p-4 bg-slate-50/70 border-t border-slate-100 text-xs sm:text-sm text-slate-600 leading-relaxed">
+                        {faq.a}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             );
           })}

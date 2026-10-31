@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { usePresentation } from "@/context/PresentationContext";
 import { PageHeader } from "@/components/common/PageHeader";
@@ -152,6 +153,7 @@ export default function ArchitecturePage() {
       />
 
       {/* Architectural Comparison Toggle */}
+      <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs">
         <div className="flex items-center gap-2">
           <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
@@ -188,6 +190,7 @@ export default function ArchitecturePage() {
           </strong>
         </div>
       </div>
+      </motion.div>
 
       {/* Main Architecture Diagram / Interactive Tiers */}
       {selectedArch === "iomete" ? (
@@ -198,11 +201,16 @@ export default function ArchitecturePage() {
               Click Any Layer to Inspect Technical Details
             </div>
 
-            {nodes.map((node) => {
+            {nodes.map((node, idx) => {
               const isSelected = node.id === activeNodeId;
               return (
-                <div
+                <motion.div
                   key={node.id}
+                  initial={{ opacity: 0, x: -12 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.25, delay: idx * 0.07 }}
+                  whileHover={{ x: 2 }}
+                  layout
                   onClick={() => setActiveNodeId(node.id)}
                   className={`p-4 rounded-2xl border-2 transition-all cursor-pointer ${
                     isSelected
@@ -238,7 +246,7 @@ export default function ArchitecturePage() {
                       }`}
                     />
                   </div>
-                </div>
+                </motion.div>
               );
             })}
           </div>
@@ -246,6 +254,14 @@ export default function ArchitecturePage() {
           {/* Right 5 Cols: Deep Inspection Drawer for Selected Node */}
           <div className="lg:col-span-5 space-y-4">
             <div className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/80 shadow-sm space-y-5 sticky top-20">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeNodeId}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.2 }}
+                >
               <div className="space-y-1">
                 <Badge variant="default" size="sm">
                   {activeNode.tier} Tier Specification
@@ -289,6 +305,9 @@ export default function ArchitecturePage() {
                 </ul>
               </div>
 
+                </motion.div>
+              </AnimatePresence>
+
               <div className="pt-2">
                 <Link href="/demo">
                   <Button variant="secondary" size="sm" className="w-full justify-center">
@@ -316,6 +335,7 @@ export default function ArchitecturePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
+            <motion.div initial={{ opacity: 0, scale: 0.97 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.3, delay: 0 * 0.1 }}>
             <div className="bg-white/5 border border-white/10 p-5 rounded-2xl space-y-3">
               <AlertOctagon className="h-6 w-6 text-rose-400" />
               <h4 className="text-base font-bold text-white">Closed Table Format</h4>
@@ -323,7 +343,9 @@ export default function ArchitecturePage() {
                 Data is locked into proprietary micro-partitions. You cannot run PySpark, Trino, or external AI models without paying massive data export fees.
               </p>
             </div>
+            </motion.div>
 
+            <motion.div initial={{ opacity: 0, scale: 0.97 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.3, delay: 1 * 0.1 }}>
             <div className="bg-white/5 border border-white/10 p-5 rounded-2xl space-y-3">
               <AlertOctagon className="h-6 w-6 text-rose-400" />
               <h4 className="text-base font-bold text-white">Opaque Credit Metering</h4>
@@ -331,7 +353,9 @@ export default function ArchitecturePage() {
                 Runaway billing where a single poorly written query or unmonitored warehouse cluster can consume tens of thousands in credits overnight.
               </p>
             </div>
+            </motion.div>
 
+            <motion.div initial={{ opacity: 0, scale: 0.97 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.3, delay: 2 * 0.1 }}>
             <div className="bg-white/5 border border-white/10 p-5 rounded-2xl space-y-3">
               <AlertOctagon className="h-6 w-6 text-rose-400" />
               <h4 className="text-base font-bold text-white">Multi-Tenant Security Exposure</h4>
@@ -339,6 +363,7 @@ export default function ArchitecturePage() {
                 Data resides in vendor-managed infrastructure rather than inside your own isolated AWS VPC, creating InfoSec compliance hurdles.
               </p>
             </div>
+            </motion.div>
           </div>
 
           <div className="pt-4 flex items-center justify-between border-t border-white/10">

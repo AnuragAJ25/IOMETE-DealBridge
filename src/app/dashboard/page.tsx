@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { usePresentation } from "@/context/PresentationContext";
 import { PageHeader } from "@/components/common/PageHeader";
 import { SectionHeader } from "@/components/common/SectionHeader";
@@ -69,16 +70,26 @@ export default function DashboardPage() {
 
       {/* Top 4 KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs">
+        <motion.div
+          className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0 }}
+        >
           <div className="flex items-center justify-between text-slate-400 mb-2">
             <span className="text-xs font-semibold uppercase tracking-wider">Account</span>
             <Building2 className="h-4 w-4 text-sky-600" />
           </div>
           <div className="text-xl font-bold text-slate-900 truncate">{sessionData.buyerCompany}</div>
           <div className="text-xs text-slate-500 mt-1">Tier-1 FinTech • Series C</div>
-        </div>
+        </motion.div>
 
-        <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs">
+        <motion.div
+          className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.07 }}
+        >
           <div className="flex items-center justify-between text-slate-400 mb-2">
             <span className="text-xs font-semibold uppercase tracking-wider">Current Cloud Spend</span>
             <DollarSign className="h-4 w-4 text-amber-500" />
@@ -89,9 +100,14 @@ export default function DashboardPage() {
           <div className="text-xs text-amber-600 font-medium mt-1">
             40% over budget on {sessionData.currentWarehouse}
           </div>
-        </div>
+        </motion.div>
 
-        <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs">
+        <motion.div
+          className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.14 }}
+        >
           <div className="flex items-center justify-between text-slate-400 mb-2">
             <span className="text-xs font-semibold uppercase tracking-wider">Target IOMETE Savings</span>
             <TrendingDown className="h-4 w-4 text-emerald-600" />
@@ -100,16 +116,21 @@ export default function DashboardPage() {
             ${(estimatedSavings / 1000).toFixed(0)}k<span className="text-xs font-normal text-slate-400">/year</span>
           </div>
           <div className="text-xs text-emerald-700 font-medium mt-1">68.4% compute cost reduction</div>
-        </div>
+        </motion.div>
 
-        <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs">
+        <motion.div
+          className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.21 }}
+        >
           <div className="flex items-center justify-between text-slate-400 mb-2">
             <span className="text-xs font-semibold uppercase tracking-wider">Evaluation Health</span>
             <Target className="h-4 w-4 text-indigo-600" />
           </div>
           <div className="text-xl font-bold text-indigo-600">High Conviction</div>
           <div className="text-xs text-slate-500 mt-1">78% Win Probability • 14d to close</div>
-        </div>
+        </motion.div>
       </div>
 
       {/* Main Grid: Account Snapshot & Meeting Checklist */}
@@ -152,6 +173,32 @@ export default function DashboardPage() {
                   {sessionData.activeAnalysts} BI Analysts
                 </span>
                 <span className="text-xs text-slate-500">Tableau & dbt core workflows</span>
+              </div>
+            </div>
+
+            {/* Buyer Interaction Signals */}
+            <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-2">
+              <div className="flex items-center justify-between text-xs font-semibold text-slate-700">
+                <span>Buyer Environment & Priorities</span>
+                <Badge variant="indigo" size="sm">
+                  Target: {sessionData.deploymentTarget.toUpperCase()}
+                </Badge>
+              </div>
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                {sessionData.selectedRequirements && sessionData.selectedRequirements.length > 0 ? (
+                  sessionData.selectedRequirements.map((req, i) => (
+                    <span
+                      key={i}
+                      className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-[11px] font-medium text-slate-700 shadow-2xs"
+                    >
+                      {req}
+                    </span>
+                  ))
+                ) : (
+                  <span className="text-xs text-slate-400 italic">
+                    No custom requirements flagged yet. Configure in Buyer Interaction Sandbox.
+                  </span>
+                )}
               </div>
             </div>
 

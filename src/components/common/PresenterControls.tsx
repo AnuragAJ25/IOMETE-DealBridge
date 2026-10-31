@@ -19,7 +19,7 @@ import {
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Tooltip } from "@/components/ui/Tooltip";
-import Link from "next/navigation";
+import Link from "next/link";
 
 export function PresenterControls() {
   const {
@@ -169,6 +169,16 @@ export function PresenterControls() {
               <FileText className="h-3.5 w-3.5" />
               <span className="hidden sm:inline">Talking Points</span>
             </button>
+          </Tooltip>
+
+          {/* Quick Presenter Console Trigger */}
+          <Tooltip content="Open Presenter Console">
+            <Link
+              href="/presenter"
+              className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700/60 transition-colors"
+            >
+              <Sparkles className="h-4 w-4 text-sky-400" />
+            </Link>
           </Tooltip>
 
           {/* Role Indicator / Switcher */}

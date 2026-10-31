@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { Navbar } from "@/components/common/Navbar";
 import { Sidebar } from "@/components/common/Sidebar";
@@ -22,7 +23,18 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             isLandingPage ? "px-4 sm:px-6 lg:px-8 py-8" : "p-4 sm:p-6 lg:p-8"
           }`}
         >
-          {children}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={pathname}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="flex flex-col flex-1"
+            >
+              {children}
+            </motion.div>
+          </AnimatePresence>
         </main>
       </div>
 
