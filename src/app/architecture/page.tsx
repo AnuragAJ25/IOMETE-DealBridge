@@ -9,6 +9,7 @@ import { SectionHeader } from "@/components/common/SectionHeader";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Tooltip } from "@/components/ui/Tooltip";
+import { ArchitectureFlow } from "@/components/architecture/ArchitectureFlow";
 import {
   Layers,
   Database,
@@ -194,130 +195,8 @@ export default function ArchitecturePage() {
 
       {/* Main Architecture Diagram / Interactive Tiers */}
       {selectedArch === "iomete" ? (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Left 7 Cols: Interactive Architecture Stack */}
-          <div className="lg:col-span-7 space-y-3">
-            <div className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
-              Click Any Layer to Inspect Technical Details
-            </div>
-
-            {nodes.map((node, idx) => {
-              const isSelected = node.id === activeNodeId;
-              return (
-                <motion.div
-                  key={node.id}
-                  initial={{ opacity: 0, x: -12 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.25, delay: idx * 0.07 }}
-                  whileHover={{ x: 2 }}
-                  layout
-                  onClick={() => setActiveNodeId(node.id)}
-                  className={`p-4 rounded-2xl border-2 transition-all cursor-pointer ${
-                    isSelected
-                      ? `${node.color} shadow-md scale-[1.01]`
-                      : "bg-white border-slate-200/80 hover:border-sky-300 hover:bg-slate-50/50"
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white shadow-xs border border-slate-200">
-                        {node.tier === "Storage" && <Cloud className="h-4 w-4 text-sky-600" />}
-                        {node.tier === "Format" && <Database className="h-4 w-4 text-teal-600" />}
-                        {node.tier === "Compute" && <Cpu className="h-4 w-4 text-indigo-600" />}
-                        {node.tier === "Governance" && <ShieldCheck className="h-4 w-4 text-emerald-600" />}
-                        {node.tier === "Consumption" && <BarChart3 className="h-4 w-4 text-purple-600" />}
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <h3 className="text-sm font-bold tracking-tight text-slate-900">
-                            {node.title}
-                          </h3>
-                          <Badge variant="outline" size="sm">
-                            {node.tier}
-                          </Badge>
-                        </div>
-                        <p className="text-xs text-slate-500 mt-0.5">{node.subtitle}</p>
-                      </div>
-                    </div>
-
-                    <ArrowRight
-                      className={`h-4 w-4 transition-transform ${
-                        isSelected ? "text-slate-900 translate-x-1" : "text-slate-300"
-                      }`}
-                    />
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-
-          {/* Right 5 Cols: Deep Inspection Drawer for Selected Node */}
-          <div className="lg:col-span-5 space-y-4">
-            <div className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/80 shadow-sm space-y-5 sticky top-20">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activeNodeId}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.2 }}
-                >
-              <div className="space-y-1">
-                <Badge variant="default" size="sm">
-                  {activeNode.tier} Tier Specification
-                </Badge>
-                <h3 className="text-lg font-bold text-slate-900 tracking-tight mt-2">
-                  {activeNode.title}
-                </h3>
-                <p className="text-xs text-slate-500">{activeNode.subtitle}</p>
-              </div>
-
-              {/* Spec Key-Value Table */}
-              <div className="space-y-2 pt-2 border-t border-slate-100">
-                <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 block">
-                  Enterprise Technical Parameters
-                </span>
-                <div className="grid grid-cols-1 gap-2">
-                  {activeNode.specs.map((spec, i) => (
-                    <div
-                      key={i}
-                      className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between text-xs"
-                    >
-                      <span className="text-slate-500">{spec.label}:</span>
-                      <span className="font-bold text-slate-800">{spec.value}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Key Architectural Differentiators */}
-              <div className="space-y-2 pt-2 border-t border-slate-100">
-                <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 block">
-                  Why It Matters for {sessionData.buyerCompany}
-                </span>
-                <ul className="space-y-2">
-                  {activeNode.details.map((detail, idx) => (
-                    <li key={idx} className="flex items-start gap-2 text-xs text-slate-700">
-                      <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
-                      <span className="leading-relaxed">{detail}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-                </motion.div>
-              </AnimatePresence>
-
-              <div className="pt-2">
-                <Link href="/demo">
-                  <Button variant="secondary" size="sm" className="w-full justify-center">
-                    <span>See Live Execution in Demo</span>
-                    <ArrowRight className="h-3.5 w-3.5 ml-1" />
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </div>
+        <div className="space-y-6">
+          <ArchitectureFlow />
         </div>
       ) : (
         /* Legacy Closed Warehouse Comparison View */

@@ -7,6 +7,7 @@ import { usePresentation } from "@/context/PresentationContext";
 import { PageHeader } from "@/components/common/PageHeader";
 import { SectionHeader } from "@/components/common/SectionHeader";
 import { VideoCard } from "@/components/common/VideoCard";
+import { IndustryDemoScenarios } from "@/components/demo/IndustryDemoScenarios";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import {
@@ -122,6 +123,9 @@ WHERE risk_score > 85;`,
           </div>
         }
       />
+
+      {/* Personalized Industry Scenarios */}
+      <IndustryDemoScenarios />
 
       {/* Interactive SQL Workbench Simulator */}
       <div className="bg-white rounded-3xl border border-slate-200/80 shadow-sm overflow-hidden">

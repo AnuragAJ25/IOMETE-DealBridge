@@ -39,3 +39,25 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Python environments
+venv/
+.venv/
+
+# Testing
+.pytest_cache/
+
+# Environment secrets
+.env
+.env.*
+!.env.example
+
+# Ignore Python cache files everywhere
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd

@@ -6,6 +6,7 @@ import { usePresentation } from "@/context/PresentationContext";
 import { PageHeader } from "@/components/common/PageHeader";
 import { SectionHeader } from "@/components/common/SectionHeader";
 import { FeatureCard } from "@/components/common/FeatureCard";
+import { GroundedSecurityAssistant } from "@/components/security/GroundedSecurityAssistant";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import {
@@ -167,6 +168,9 @@ export default function SecurityPage() {
           ]}
         />
       </div>
+
+      {/* Grounded Security & Compliance Assistant */}
+      <GroundedSecurityAssistant />
 
       {/* Interactive RBAC Simulator */}
       <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-sm space-y-6">

@@ -23,6 +23,7 @@ import {
   SlidersHorizontal,
 } from "lucide-react";
 import { ProblemStorytelling } from "@/components/storytelling/ProblemStorytelling";
+import { UseCaseFinder } from "@/components/use-cases/UseCaseFinder";
 
 interface UseCase {
   id: string;
@@ -37,7 +38,7 @@ interface UseCase {
 
 export default function UseCasesPage() {
   const { sessionData, goToStage } = usePresentation();
-  const [activeView, setActiveView] = useState<"use-cases" | "dilemma">("use-cases");
+  const [activeView, setActiveView] = useState<"finder" | "use-cases" | "dilemma">("finder");
   const [filter, setFilter] = useState<string>("All");
   const [selectedCaseId, setSelectedCaseId] = useState<string>("lakehouse");
 
@@ -113,6 +114,16 @@ export default function UseCasesPage() {
           <div className="flex items-center gap-2">
             <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
               <button
+                onClick={() => setActiveView("finder")}
+                className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                  activeView === "finder"
+                    ? "bg-sky-600 text-white shadow-xs"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                Use-Case Finder
+              </button>
+              <button
                 onClick={() => setActiveView("use-cases")}
                 className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                   activeView === "use-cases"
@@ -126,7 +137,7 @@ export default function UseCasesPage() {
                 onClick={() => setActiveView("dilemma")}
                 className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                   activeView === "dilemma"
-                    ? "bg-sky-600 text-white shadow-xs"
+                    ? "bg-white text-slate-900 shadow-xs"
                     : "text-slate-600 hover:text-slate-900"
                 }`}
               >
@@ -144,7 +155,9 @@ export default function UseCasesPage() {
         }
       />
 
-      {activeView === "dilemma" ? (
+      {activeView === "finder" ? (
+        <UseCaseFinder />
+      ) : activeView === "dilemma" ? (
         <ProblemStorytelling />
       ) : (
         <>

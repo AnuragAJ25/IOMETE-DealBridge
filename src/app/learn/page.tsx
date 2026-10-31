@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ProductIntroduction } from "@/components/storytelling/ProductIntroduction";
+import { ExpertVideoSection } from "@/components/common/ExpertVideoPlayer";
 import Link from "next/link";
 import { usePresentation } from "@/context/PresentationContext";
 import { PageHeader } from "@/components/common/PageHeader";
@@ -125,6 +126,11 @@ export default function LearnPage() {
       {/* Product Introduction Primer */}
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
         <ProductIntroduction />
+      </motion.div>
+
+      {/* Learn IOMETE from the Experts - Mandatory Video Learning Section */}
+      <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4 }}>
+        <ExpertVideoSection />
       </motion.div>
 
       {/* 3 Core Learning Cards */}
