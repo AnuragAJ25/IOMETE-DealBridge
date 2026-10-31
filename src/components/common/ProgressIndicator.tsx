@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { usePresentation } from "@/context/PresentationContext";
 import { Check, Clock } from "lucide-react";
@@ -47,11 +48,13 @@ export function ProgressIndicator({
       <div className="flex items-center min-w-[700px] justify-between relative px-3">
         {/* Background connector line */}
         <div className="absolute top-4 left-6 right-6 h-0.5 bg-slate-200 -z-0" />
-        <div
-          className="absolute top-4 left-6 h-0.5 bg-sky-600 transition-all duration-500 -z-0"
-          style={{
+        <motion.div
+          className="absolute top-4 left-6 h-0.5 bg-sky-600 -z-0"
+          initial={{ width: 0 }}
+          animate={{
             width: `${(currentStageIndex / (stages.length - 1)) * 100}%`,
           }}
+          transition={{ duration: 0.5, ease: "easeInOut" }}
         />
 
         {stages.map((stage, idx) => {
@@ -59,10 +62,13 @@ export function ProgressIndicator({
           const isCurrent = idx === currentStageIndex;
 
           return (
-            <button
+            <motion.button
               key={stage.id}
               onClick={() => goToStage(idx)}
               className="group relative z-10 flex flex-col items-center focus:outline-none cursor-pointer"
+              initial={{ opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2, delay: idx * 0.04 }}
             >
               <div
                 className={cn(
@@ -99,7 +105,7 @@ export function ProgressIndicator({
                   <span>{stage.durationMin}m</span>
                 </div>
               </div>
-            </button>
+            </motion.button>
           );
         })}
       </div>

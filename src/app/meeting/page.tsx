@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { usePresentation } from "@/context/PresentationContext";
 import { PageHeader } from "@/components/common/PageHeader";
@@ -157,49 +158,60 @@ export default function MeetingRoomPage() {
 
             {/* Simulated Stage Viewport Canvas */}
             <div className="p-6 sm:p-8 space-y-6 min-h-[380px] flex flex-col justify-between">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <Badge variant="default" size="sm">
-                    Active Module: {currentStage.route}
-                  </Badge>
-                  <span className="text-xs text-slate-400">
-                    Step {currentStageIndex + 1} of {stages.length}
-                  </span>
-                </div>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentStageIndex}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.25, ease: "easeInOut" }}
+                  className="space-y-3"
+                >
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Badge variant="default" size="sm">
+                        Active Module: {currentStage.route}
+                      </Badge>
+                      <span className="text-xs text-slate-400">
+                        Step {currentStageIndex + 1} of {stages.length}
+                      </span>
+                    </div>
 
-                <h3 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
-                  {currentStage.title}
-                </h3>
+                    <h3 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+                      {currentStage.title}
+                    </h3>
 
-                <p className="text-sm text-slate-600 leading-relaxed max-w-xl">
-                  {currentStage.sellerGoal}
-                </p>
-              </div>
-
-              {/* Dynamic Stage Highlights preview based on active stage */}
-              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/70 space-y-3">
-                <div className="flex items-center justify-between text-xs font-semibold text-slate-700">
-                  <span>Interactive Highlights Available in this Module:</span>
-                  <Link
-                    href={currentStage.route}
-                    className="text-sky-600 hover:text-sky-700 flex items-center gap-1"
-                  >
-                    <span>Launch Full Interactive Module</span>
-                    <ArrowRight className="h-3 w-3" />
-                  </Link>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                  <div className="p-2.5 rounded-lg bg-white border border-slate-200/60 flex items-center gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
-                    <span className="text-slate-700">Buyer Can Experiment with Sliders</span>
+                    <p className="text-sm text-slate-600 leading-relaxed max-w-xl">
+                      {currentStage.sellerGoal}
+                    </p>
                   </div>
-                  <div className="p-2.5 rounded-lg bg-white border border-slate-200/60 flex items-center gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
-                    <span className="text-slate-700">Live Telemetry & Notes Docked</span>
+
+                  {/* Dynamic Stage Highlights preview based on active stage */}
+                  <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/70 space-y-3">
+                    <div className="flex items-center justify-between text-xs font-semibold text-slate-700">
+                      <span>Interactive Highlights Available in this Module:</span>
+                      <Link
+                        href={currentStage.route}
+                        className="text-sky-600 hover:text-sky-700 flex items-center gap-1"
+                      >
+                        <span>Launch Full Interactive Module</span>
+                        <ArrowRight className="h-3 w-3" />
+                      </Link>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                      <div className="p-2.5 rounded-lg bg-white border border-slate-200/60 flex items-center gap-2">
+                        <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
+                        <span className="text-slate-700">Buyer Can Experiment with Sliders</span>
+                      </div>
+                      <div className="p-2.5 rounded-lg bg-white border border-slate-200/60 flex items-center gap-2">
+                        <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
+                        <span className="text-slate-700">Live Telemetry & Notes Docked</span>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
+                </motion.div>
+              </AnimatePresence>
 
               {/* Quick Jump to Module */}
               <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
@@ -237,8 +249,26 @@ export default function MeetingRoomPage() {
                 <span className="font-semibold text-slate-700">{sessionData.buyerName}</span>
               </div>
               <div className="flex justify-between text-slate-500 text-[11px]">
-                <span>Current Interaction</span>
-                <span className="font-medium text-sky-700">{syncedBuyerAction}</span>
+                <span>Target Cloud</span>
+                <span className="font-semibold text-sky-700 uppercase">{sessionData.deploymentTarget}</span>
+              </div>
+              <div className="flex justify-between text-slate-500 text-[11px]">
+                <span>Spend / Footprint</span>
+                <span className="font-semibold text-slate-800">
+                  ${sessionData.monthlyCloudSpend.toLocaleString()}/mo • {sessionData.dataSizeTB} TB
+                </span>
+              </div>
+              <div className="flex justify-between text-slate-500 text-[11px]">
+                <span>Active Priorities</span>
+                <span className="font-semibold text-emerald-700">
+                  {sessionData.selectedRequirements.length} Criteria Selected
+                </span>
+              </div>
+              <div className="flex justify-between text-slate-500 text-[11px]">
+                <span>Logged Questions</span>
+                <span className="font-semibold text-amber-700">
+                  {sessionData.bookmarkedQuestions.length} Questions
+                </span>
               </div>
               <div className="flex justify-between text-slate-500 text-[11px]">
                 <span>Meeting Elapsed</span>
@@ -294,6 +324,27 @@ export default function MeetingRoomPage() {
                 <Button variant="ghost" size="sm" className="w-full justify-start text-xs text-slate-600">
                   <CheckCircle2 className="h-3.5 w-3.5 text-slate-400 mr-2" />
                   <span>Conclude & Generate MAP</span>
+                </Button>
+              </Link>
+            </div>
+          </div>
+
+          <div className="bg-indigo-50 rounded-2xl p-4 border border-indigo-200/80 shadow-sm space-y-3">
+            <h3 className="text-xs font-bold text-indigo-900 uppercase tracking-wider flex items-center gap-1.5">
+              <Sparkles className="h-3.5 w-3.5" />
+              Storytelling Views
+            </h3>
+            <div className="space-y-1.5">
+              <Link href="/use-cases" className="block">
+                <Button variant="ghost" size="sm" className="w-full justify-start text-xs text-indigo-800 hover:bg-indigo-100">
+                  <Layers className="h-3.5 w-3.5 text-indigo-600 mr-2" />
+                  <span>Platform Dilemma Story</span>
+                </Button>
+              </Link>
+              <Link href="/learn" className="block">
+                <Button variant="ghost" size="sm" className="w-full justify-start text-xs text-indigo-800 hover:bg-indigo-100">
+                  <Database className="h-3.5 w-3.5 text-indigo-600 mr-2" />
+                  <span>Product Introduction</span>
                 </Button>
               </Link>
             </div>

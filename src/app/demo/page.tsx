@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import { usePresentation } from "@/context/PresentationContext";
 import { PageHeader } from "@/components/common/PageHeader";
@@ -103,7 +104,7 @@ WHERE risk_score > 85;`,
   const clusterRamGB = activeNodes * 32;
 
   return (
-    <div className="space-y-8">
+    <motion.div className="space-y-8" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }}>
       <PageHeader
         badge="Stage 3 of 7 • Platform Demo"
         badgeVariant="default"
@@ -297,9 +298,14 @@ WHERE risk_score > 85;`,
             {Array.from({ length: 16 }).map((_, idx) => {
               const isNodeActive = idx < activeNodes;
               return (
-                <div
+                <motion.div
                   key={idx}
-                  className={`p-3 rounded-xl border text-center transition-all ${
+                  animate={{
+                    scale: isNodeActive ? 1 : 0.95,
+                    opacity: isNodeActive ? 1 : 0.4,
+                  }}
+                  transition={{ duration: 0.2, delay: idx * 0.02 }}
+                  className={`p-3 rounded-xl border text-center ${
                     isNodeActive
                       ? "bg-sky-50 border-sky-300 text-sky-900 shadow-xs"
                       : "bg-slate-50/50 border-slate-200/50 text-slate-300 opacity-40"
@@ -310,7 +316,7 @@ WHERE risk_score > 85;`,
                   <span className="text-[9px] block text-slate-400">
                     {isNodeActive ? "Online" : "Idle"}
                   </span>
-                </div>
+                </motion.div>
               );
             })}
           </div>
@@ -318,6 +324,7 @@ WHERE risk_score > 85;`,
       </div>
 
       {/* Video Platform Tour Component */}
+      <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4 }}>
       <div className="space-y-4">
         <SectionHeader
           title="Guided Product Video & Feature Walkthrough"
@@ -332,6 +339,7 @@ WHERE risk_score > 85;`,
           category="Architectural Walkthrough"
         />
       </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }

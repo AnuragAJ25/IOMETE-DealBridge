@@ -105,6 +105,9 @@ export interface SessionData {
   activeAnalysts: number;
   notes: string[];
   bookmarkedQuestions: string[];
+  deploymentTarget: "aws" | "azure" | "gcp" | "onprem" | "hybrid" | "airgapped";
+  selectedRequirements: string[];
+  selectedWorkloads: string[];
 }
 
 interface PresentationContextType {
@@ -119,6 +122,8 @@ interface PresentationContextType {
   setIsNotesOpen: (open: boolean) => void;
   sessionData: SessionData;
   updateSessionData: (updates: Partial<SessionData>) => void;
+  toggleRequirement: (reqId: string) => void;
+  toggleWorkload: (workloadId: string) => void;
   meetingTimeElapsed: number;
   isTimerRunning: boolean;
   toggleTimer: () => void;
@@ -134,6 +139,14 @@ const defaultSession: SessionData = {
   dataSizeTB: 120,
   monthlyCloudSpend: 42000,
   activeAnalysts: 35,
+  deploymentTarget: "aws",
+  selectedRequirements: [
+    "customer_vpc",
+    "zero_lockin",
+    "predictable_spend",
+    "subsecond_bi",
+  ],
+  selectedWorkloads: ["bi_reporting", "lakehouse_etl"],
   notes: [
     "Buyer expressed high urgency around Q4 budget cuts; compute credits 40% over budget.",
     "Interested in Apache Iceberg table format to avoid vendor lock-in.",
@@ -171,7 +184,8 @@ export function PresentationProvider({ children }: { children: React.ReactNode }
       const saved = localStorage.getItem("iomete_dealbridge_session");
       if (saved) {
         try {
-          setSessionData(JSON.parse(saved));
+          const parsed = JSON.parse(saved);
+          setSessionData((prev) => ({ ...prev, ...parsed }));
         } catch {
           // ignore parsing error
         }
@@ -193,6 +207,34 @@ export function PresentationProvider({ children }: { children: React.ReactNode }
   const updateSessionData = (updates: Partial<SessionData>) => {
     setSessionData((prev) => {
       const next = { ...prev, ...updates };
+      if (typeof window !== "undefined") {
+        localStorage.setItem("iomete_dealbridge_session", JSON.stringify(next));
+      }
+      return next;
+    });
+  };
+
+  const toggleRequirement = (reqId: string) => {
+    setSessionData((prev) => {
+      const exists = prev.selectedRequirements.includes(reqId);
+      const nextReqs = exists
+        ? prev.selectedRequirements.filter((id) => id !== reqId)
+        : [...prev.selectedRequirements, reqId];
+      const next = { ...prev, selectedRequirements: nextReqs };
+      if (typeof window !== "undefined") {
+        localStorage.setItem("iomete_dealbridge_session", JSON.stringify(next));
+      }
+      return next;
+    });
+  };
+
+  const toggleWorkload = (workloadId: string) => {
+    setSessionData((prev) => {
+      const exists = prev.selectedWorkloads.includes(workloadId);
+      const nextWorkloads = exists
+        ? prev.selectedWorkloads.filter((id) => id !== workloadId)
+        : [...prev.selectedWorkloads, workloadId];
+      const next = { ...prev, selectedWorkloads: nextWorkloads };
       if (typeof window !== "undefined") {
         localStorage.setItem("iomete_dealbridge_session", JSON.stringify(next));
       }
@@ -247,6 +289,8 @@ export function PresentationProvider({ children }: { children: React.ReactNode }
         setIsNotesOpen,
         sessionData,
         updateSessionData,
+        toggleRequirement,
+        toggleWorkload,
         meetingTimeElapsed,
         isTimerRunning,
         toggleTimer,
