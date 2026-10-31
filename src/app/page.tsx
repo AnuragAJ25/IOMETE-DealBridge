@@ -33,6 +33,7 @@ import { FeatureCard } from "@/components/common/FeatureCard";
 import { PlatformPreview } from "@/components/landing/PlatformPreview";
 import { ProblemStorytelling } from "@/components/storytelling/ProblemStorytelling";
 import { ProductIntroduction } from "@/components/storytelling/ProductIntroduction";
+import { ScrollReveal } from "@/components/common/ScrollReveal";
 
 export default function HomePage() {
   const router = useRouter();
@@ -187,6 +188,7 @@ export default function HomePage() {
       />
 
       {/* 5. Core Feature Overview (The 4 Value Pillars) */}
+      <ScrollReveal>
       <section className="space-y-6">
         <div className="text-center max-w-2xl mx-auto space-y-2">
           <Badge variant="indigo" size="sm">
@@ -259,8 +261,10 @@ export default function HomePage() {
           />
         </div>
       </section>
+      </ScrollReveal>
 
       {/* 6. Guided Sales Narrative Roadmap */}
+      <ScrollReveal delay={0.1}>
       <section className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-sm space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
@@ -288,8 +292,10 @@ export default function HomePage() {
 
         <ProgressIndicator variant="stepper" />
       </section>
+      </ScrollReveal>
 
       {/* 7. Quick Launchpad Grid */}
+      <ScrollReveal delay={0.15}>
       <section className="bg-slate-900 text-white rounded-3xl p-8 sm:p-10 border border-slate-800 space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
@@ -365,8 +371,8 @@ export default function HomePage() {
               tag: "Stage 5",
             },
             {
-              title: "Competitive Battlecards",
-              desc: "Head-to-head vs Snowflake, Databricks & BigQuery",
+              title: "Why IOMETE?",
+              desc: "Factual comparison with Snowflake, Databricks & BigQuery",
               href: "/competitors",
               tag: "Stage 6",
             },
@@ -400,6 +406,7 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+      </ScrollReveal>
     </div>
   );
 }

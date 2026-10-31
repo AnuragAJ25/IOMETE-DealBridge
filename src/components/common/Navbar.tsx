@@ -53,7 +53,7 @@ export function Navbar() {
     { label: "Live Demo", href: "/demo" },
     { label: "Business Case", href: "/business-case" },
     { label: "Security", href: "/security" },
-    { label: "Battlecards", href: "/competitors" },
+    { label: "Why IOMETE?", href: "/competitors" },
     { label: "Executive Summary", href: "/meeting-summary" },
   ];
 

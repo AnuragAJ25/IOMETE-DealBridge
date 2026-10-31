@@ -117,7 +117,7 @@ export function Sidebar({ className }: { className?: string }) {
           badgeVariant: "warning",
         },
         {
-          label: "Competitive Battlecards",
+          label: "Why IOMETE?",
           href: "/competitors",
           icon: <Swords className="h-4 w-4" />,
         },

@@ -74,13 +74,13 @@ export const PRESENTATION_STAGES: PresentationStage[] = [
   {
     id: "competitors",
     number: 6,
-    title: "Competitive Landscape & Battlecards",
+    title: "Why Consider IOMETE?",
     shortTitle: "Comparison",
     route: "/competitors",
     durationMin: 5,
     category: "Economics",
-    sellerGoal: "Address proprietary warehouse lock-in and excessive credit markups.",
-    buyerFocus: "Examine clear contrast with Snowflake, Databricks, and AWS Athena.",
+    sellerGoal: "Help buyer understand platform approach differences and IOMETE's positioning.",
+    buyerFocus: "Compare deployment models, data sovereignty, and open standards across platforms.",
   },
   {
     id: "meeting-summary",
