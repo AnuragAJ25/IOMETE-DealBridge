@@ -289,3 +289,51 @@ Summarizes an executive or technical sales meeting, recaps key requirements, not
   ]
 }
 ```
+
+---
+
+### 3.7. Comprehensive AI Knowledge Assistant (`/api/ai/assistant`)
+
+Grounded conversational AI assistant and sales copilot. Backed by hybrid vector + keyword search over official IOMETE documentation (`knowledge_base/iomete_docs/`), multi-turn memory, persona tailoring (CTO, CIO, Data Engineer, FinOps, Architect), and multilingual English + Hindi/Hinglish fluency.
+
+- **URL**: `/api/ai/assistant`
+- **Method**: `POST`
+
+#### Request Payload
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `message` | `string` | Yes | User inquiry, technical question, or objection (English or Hindi/Hinglish) |
+| `history` | `ChatMessage[]` | No | List of prior conversation turns (`role: 'user' \| 'assistant'`, `content: string`) |
+| `persona` | `string` | No | Target buyer persona for framing (`'CTO'`, `'Data Engineer'`, `'FinOps'`, `'CIO'`, `'Architect'`) |
+| `current_page` | `string` | No | Current frontend route for context (e.g. `'/architecture'`, `'/why-iomete'`) |
+
+#### Example Request
+```json
+{
+  "message": "What makes IOMETE different from Databricks and Snowflake?",
+  "persona": "CTO",
+  "current_page": "/competitors"
+}
+```
+
+#### Example Response (`200 OK`)
+```json
+{
+  "answer": "IOMETE differentiates from Snowflake and Databricks across four foundational pillars: 100% open Apache Iceberg tables, customer VPC deployment with Zero-Data-Retention (ZDR), transparent pricing ($500/vCPU/year with zero compute markups), and an automated Lakehouse Manager.",
+  "citations": [
+    {
+      "doc_title": "IOMETE Competitor Comparison & Differentiation",
+      "section_title": "Executive Summary: How IOMETE Compares",
+      "filename": "08_competitor_comparison.md",
+      "source_url": "https://iomete.com/why-iomete"
+    }
+  ],
+  "suggested_followups": [
+    "How does IOMETE's pricing model calculate TCO savings compared to Snowflake?",
+    "Can you explain how IOMETE deploys within our own AWS/Azure/GCP VPC?"
+  ],
+  "evidence_status": "Verified from Documentation",
+  "needs_confirmation": false
+}
+```
+

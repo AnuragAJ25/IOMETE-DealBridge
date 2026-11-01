@@ -9,6 +9,8 @@ from fastapi.testclient import TestClient
 from backend.app.main import app
 
 
+from backend.app.core.config import settings
+
 client = TestClient(app)
 
 
@@ -30,13 +32,13 @@ class TestHealthEndpoint:
         """Version returned matches the settings constant."""
         response = client.get("/health")
         data = response.json()
-        assert data["version"] == "1.0.0"
+        assert data["version"] == settings.VERSION
 
     def test_health_reports_gemini_model(self):
         """Health endpoint should include configured Gemini model name."""
         response = client.get("/health")
         data = response.json()
-        assert data["gemini_model"] == "gemini-2.5-flash"
+        assert data["gemini_model"] == settings.GEMINI_MODEL
 
     def test_health_documentation_count_is_integer(self):
         """Documentation file count is a non-negative integer."""

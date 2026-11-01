@@ -1,7 +1,7 @@
 import json
 import logging
 import re
-from typing import Any, Dict, Optional, Type, TypeVar
+from typing import Any, Dict, List, Optional, Type, TypeVar
 from pydantic import BaseModel
 
 from backend.app.core.config import settings
@@ -23,15 +23,19 @@ class GeminiServiceError(Exception):
 
 
 class GeminiService:
-    """Centralized, reusable service for Google Gemini AI integration using official Google Gen AI SDK."""
+    """Centralized, resilient service for Google Gemini AI integration using official Google Gen AI SDK."""
 
     def __init__(
         self,
         api_key: Optional[str] = None,
         model_name: Optional[str] = None,
+        fallback_model: Optional[str] = None,
+        embedding_model: Optional[str] = None,
     ):
         self.api_key = api_key or settings.GEMINI_API_KEY
         self.model_name = model_name or settings.GEMINI_MODEL
+        self.fallback_model = fallback_model or settings.GEMINI_FALLBACK_MODEL
+        self.embedding_model = embedding_model or settings.EMBEDDING_MODEL
         self._client = None
         self._initialize_client()
 
@@ -45,17 +49,7 @@ class GeminiService:
         try:
             from google import genai
             self._client = genai.Client(api_key=self.api_key)
-            logger.info(f"Initialized Google Gen AI client with model: {self.model_name}")
-        except ImportError:
-            logger.warning("google-genai SDK not available; checking fallback to google.generativeai.")
-            try:
-                import google.generativeai as legacy_genai
-                legacy_genai.configure(api_key=self.api_key)
-                self._client = legacy_genai.GenerativeModel(self.model_name)
-                logger.info("Initialized legacy google.generativeai client as fallback.")
-            except Exception as e:
-                logger.error(f"Failed to initialize Google Gemini client: {e}")
-                self._client = None
+            logger.info(f"Initialized Google Gen AI client with primary model: {self.model_name}")
         except Exception as e:
             logger.error(f"Failed to initialize Google Gen AI client: {e}")
             self._client = None
@@ -70,7 +64,7 @@ class GeminiService:
         response_model: Type[T],
         system_instruction: str = IOMETE_BASE_SYSTEM_INSTRUCTION,
     ) -> T:
-        """Generate structured JSON output validated against a Pydantic schema."""
+        """Generate structured JSON output validated against a Pydantic schema with automatic model fallback."""
         if not self.is_configured():
             raise GeminiServiceError(
                 message="Google Gemini API key is not configured on the backend server. Please configure GEMINI_API_KEY in backend/.env.",
@@ -79,49 +73,38 @@ class GeminiService:
             )
 
         raw_response_text = ""
-        try:
-            # 1. Primary: Use modern google-genai Client SDK
-            from google import genai
-            from google.genai import types
+        models_to_try = [self.model_name, self.fallback_model]
+        last_error = None
 
-            client = self._client or genai.Client(api_key=self.api_key)
-            config = types.GenerateContentConfig(
-                system_instruction=system_instruction,
-                temperature=0.2,
-                response_mime_type="application/json",
-            )
-            response = client.models.generate_content(
-                model=self.model_name,
-                contents=prompt,
-                config=config,
-            )
-            raw_response_text = response.text or ""
+        from google import genai
+        from google.genai import types
 
-        except ImportError:
-            # 2. Fallback: Use legacy google.generativeai
+        client = self._client or genai.Client(api_key=self.api_key)
+        config = types.GenerateContentConfig(
+            system_instruction=system_instruction,
+            temperature=0.2,
+            response_mime_type="application/json",
+            response_schema=response_model,
+        )
+
+        for model in models_to_try:
             try:
-                import google.generativeai as legacy_genai
-                legacy_genai.configure(api_key=self.api_key)
-                model = legacy_genai.GenerativeModel(
-                    model_name=self.model_name,
-                    system_instruction=system_instruction,
-                )
-                response = model.generate_content(
-                    prompt,
-                    generation_config={"temperature": 0.2, "response_mime_type": "application/json"},
+                response = client.models.generate_content(
+                    model=model,
+                    contents=prompt,
+                    config=config,
                 )
                 raw_response_text = response.text or ""
-            except Exception as leg_err:
-                logger.error(f"Legacy Gemini API call failed: {leg_err}")
-                raise GeminiServiceError(
-                    message=f"Gemini API request failed: {str(leg_err)}",
-                    status_code=502,
-                )
+                if raw_response_text:
+                    break
+            except Exception as e:
+                last_error = e
+                logger.warning(f"Gemini call with {model} failed: {e}. Trying fallback if available.")
 
-        except Exception as api_err:
-            logger.error(f"Gemini API call failed: {api_err}")
+        if not raw_response_text and last_error:
+            logger.error(f"All Gemini models failed: {last_error}")
             raise GeminiServiceError(
-                message=f"Gemini API call failed: {str(api_err)}",
+                message=f"Gemini API request failed across models: {str(last_error)}",
                 status_code=502,
             )
 
@@ -137,32 +120,56 @@ class GeminiService:
                 details={"raw_output_snippet": raw_response_text[:400]},
             )
 
-    def _clean_and_parse_json(self, text: str) -> Dict[str, Any]:
-        """Strip markdown fences (```json ... ```) and load JSON."""
-        clean = text.strip()
-        # Remove markdown code block fences if present
-        if clean.startswith("```"):
-            clean = re.sub(r"^```(?:json)?\s*", "", clean, flags=re.IGNORECASE)
-            clean = re.sub(r"\s*```$", "", clean)
+    async def generate_structured_content(self, *args, **kwargs):
+        """Alias for generate_structured."""
+        return await self.generate_structured(*args, **kwargs)
 
-        clean = clean.strip()
+    def embed_text(self, text: str) -> Optional[List[float]]:
+        """Generate high-dimensional vector embeddings for text using official Gemini embedding model."""
+        if not self.is_configured() or not text.strip():
+            return None
+
         try:
-            return json.loads(clean)
+            from google import genai
+            client = self._client or genai.Client(api_key=self.api_key)
+            res = client.models.embed_content(
+                model=self.embedding_model,
+                contents=text[:8000],
+            )
+            if hasattr(res, "embeddings") and res.embeddings:
+                return res.embeddings[0].values
+            return None
+        except Exception as e:
+            logger.warning(f"Failed to generate embedding with {self.embedding_model}: {e}")
+            return None
+
+    def _clean_and_parse_json(self, text: str) -> Dict[str, Any]:
+        """Strip markdown fences (```json ... ```) and load JSON safely."""
+        cleaned = text.strip()
+        # Remove markdown code fence if present
+        if cleaned.startswith("```"):
+            cleaned = re.sub(r"^```(?:json)?\s*", "", cleaned, flags=re.MULTILINE)
+            cleaned = re.sub(r"\s*```$", "", cleaned, flags=re.MULTILINE)
+
+        cleaned = cleaned.strip()
+
+        try:
+            return json.loads(cleaned)
         except json.JSONDecodeError as e:
-            # Try finding the first '{' and last '}'
-            start = clean.find("{")
-            end = clean.rfind("}")
-            if start != -1 and end != -1 and end > start:
+            # Fallback: Extract first outer JSON object {...}
+            match = re.search(r"(\{.*\})", cleaned, re.DOTALL)
+            if match:
                 try:
-                    return json.loads(clean[start : end + 1])
+                    return json.loads(match.group(1))
                 except json.JSONDecodeError:
                     pass
+            logger.error(f"Failed to parse JSON. Content: {cleaned[:400]}")
             raise GeminiServiceError(
-                message=f"Could not decode valid JSON from Gemini output: {str(e)}",
+                message=f"Model output could not be parsed as JSON: {e}",
                 status_code=502,
-                details={"raw_text": text[:300]},
+                details={"raw_text": cleaned[:400]},
             )
 
 
-# Application-level singleton
+# Global singleton instance
 gemini_service = GeminiService()

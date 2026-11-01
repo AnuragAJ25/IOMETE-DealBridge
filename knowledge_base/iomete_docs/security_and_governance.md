@@ -1,3 +1,10 @@
+---
+title: "IOMETE Security, Compliance & Governance"
+category: "Security & Compliance"
+source_url: "https://iomete.com/docs/security"
+tags: ["security", "compliance", "apache-ranger", "rbac", "soc2", "hipaa", "gdpr"]
+---
+
 # IOMETE Security, Compliance & Governance
 
 ## Section: Data Plane Security & Zero-Data-Retention

@@ -1,3 +1,10 @@
+---
+title: "IOMETE Deployment Models & Private Cloud Architecture"
+category: "Deployment"
+source_url: "https://iomete.com/docs/installation"
+tags: ["deployment", "vpc", "private-cloud", "aws", "azure", "gcp", "on-premise"]
+---
+
 # IOMETE Deployment Models & Private Cloud Architecture
 
 ## Section: Deployment Options

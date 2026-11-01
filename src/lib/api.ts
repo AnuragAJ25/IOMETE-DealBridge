@@ -135,6 +135,36 @@ export interface MeetingSummaryResponse {
 }
 
 // ---------------------------------------------------------------------------
+// 6. Comprehensive AI Knowledge Assistant & Sales Copilot
+// ---------------------------------------------------------------------------
+export interface AssistantChatMessage {
+  role: "user" | "assistant";
+  content: string;
+}
+
+export interface AssistantCitation {
+  doc_title: string;
+  section_title: string;
+  filename: string;
+  source_url: string;
+}
+
+export interface KnowledgeAssistantRequest {
+  message: string;
+  history?: AssistantChatMessage[];
+  persona?: string | null;
+  current_page?: string | null;
+}
+
+export interface KnowledgeAssistantResponse {
+  answer: string;
+  citations: AssistantCitation[];
+  suggested_followups: string[];
+  evidence_status: "Verified from Documentation" | "Needs Confirmation" | string;
+  needs_confirmation: boolean;
+}
+
+// ---------------------------------------------------------------------------
 // Fetch Helpers with Timeout & Retry
 // ---------------------------------------------------------------------------
 async function fetchWithTimeout(
@@ -298,6 +328,14 @@ export const apiClient = {
   ): Promise<MeetingSummaryResponse> =>
     apiPost<MeetingSummaryRequest, MeetingSummaryResponse>(
       "/api/ai/meeting-summary",
+      req
+    ),
+
+  askKnowledgeAssistant: (
+    req: KnowledgeAssistantRequest
+  ): Promise<KnowledgeAssistantResponse> =>
+    apiPost<KnowledgeAssistantRequest, KnowledgeAssistantResponse>(
+      "/api/ai/assistant",
       req
     ),
 };

@@ -1,3 +1,10 @@
+---
+title: "IOMETE Modern Lakehouse Architecture Overview"
+category: "Architecture"
+source_url: "https://iomete.com/docs/architecture"
+tags: ["architecture", "iceberg", "spark", "lakehouse", "compute-storage-separation"]
+---
+
 # IOMETE Modern Lakehouse Architecture Overview
 
 ## Section: Core Architectural Principles

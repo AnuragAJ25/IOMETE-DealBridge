@@ -1,20 +1,28 @@
+---
+title: "IOMETE Total Cost of Ownership (TCO) & Sizing Guidelines"
+category: "Pricing & Sizing"
+source_url: "https://iomete.com/pricing"
+tags: ["tco", "sizing", "pricing", "cost-considerations", "benchmarks", "minimum-commitment"]
+---
+
 # IOMETE Total Cost of Ownership (TCO) & Sizing Guidelines
 
-## Section: The Economics of the Modern Lakehouse
-Traditional cloud data warehouses (Snowflake, Google BigQuery, Amazon Redshift) charge massive markups on compute and proprietary storage.
-- **Compute Markups in Proprietary Warehouses**: In Snowflake, a credit can cost $2.00 to $4.00, representing a 300% to 500% markup over raw AWS EC2 or Google Cloud compute.
-- **Storage Markups**: Proprietary warehouses charge $23 to $40 per TB/month for storage that actually costs $10 to $23 per TB/month on raw cloud object storage.
-- **Egress & Vendor Lock-In**: Moving data out of proprietary warehouse tables requires expensive unload exports and egress bandwidth fees.
+## Sizing and Pricing Structure
+Official IOMETE software pricing (https://iomete.com/pricing):
+- **Free Tier**: Up to 100 vCPUs with community support at $0/month.
+- **Enterprise Plan**: $500 per vCPU per year with a **$100,000 per year minimum commitment** (200 vCPUs).
+- **Business Critical Plan**: Custom pricing with a **$250,000 per year minimum commitment**.
+- **Infrastructure Charges**: Cloud infrastructure (VMs, object storage, and data transfer) is billed separately and directly by the customer's cloud provider (AWS, Azure, GCP).
 
-## Section: IOMETE Sizing and Cost Advantage
-- **Transparent Compute**: Compute instances run directly in the customer's cloud account at native cloud provider rates (e.g., standard EC2 on-demand or Spot/Savings Plans), plus a flat, predictable IOMETE platform subscription.
-- **Zero Storage Markup**: Customers pay AWS, Azure, or GCP directly for S3/ADLS/GCS storage at raw baseline tier prices.
-- **Expected Customer Savings**:
-  - Typical compute cost reduction: 60% to 75% versus Snowflake.
-  - Typical savings versus Databricks SQL: 40% to 55% (eliminating heavy DBU surcharges and cluster management overhead).
-  - Typical payback period: 1.5 to 3 months.
+## Pricing Models: Virtual Warehouse Credits vs. vCPU Licensing
+- **Credit-Based Consumption (Snowflake, Databricks)**: Customers purchase proprietary compute credits or DBUs per cluster hour. Costs fluctuate based on usage, cluster sizing, and query concurrency.
+- **Capacity-Based Licensing (IOMETE)**: Customers license a fixed pool of vCPUs for the IOMETE software layer, while running nodes on their cloud provider at direct infrastructure rates.
+- **TCO Trade-Offs**:
+  - For steady-state, continuous analytics and heavy batch transformations, capacity licensing can offer cost predictability and reduce compute expenditure.
+  - However, customers are responsible for managing their Kubernetes cluster and paying all underlying cloud compute and network bills.
+  - Total savings vary depending on workload concurrency, usage patterns, cluster auto-suspend efficiency, and customer-negotiated cloud discounts.
 
-## Section: Workload Sizing Benchmarks
-- **Small Cluster (Development / Light BI)**: 2-4 worker nodes (16 vCPU, 64GB RAM). Ideal for up to 10 concurrent analysts and sub-5TB datasets.
-- **Medium Cluster (Enterprise Departmental BI)**: 4-8 worker nodes (32-64 vCPU, 128-256GB RAM). Ideal for 20-50 concurrent analysts and 10TB - 50TB datasets. Sub-second P95 query response time.
-- **Large Cluster (Enterprise Production Lakehouse)**: 8-16+ worker nodes with automated auto-scaling up to 32 nodes for morning dashboard bursts and heavy dbt transformations.
+## Cluster Sizing Guidelines
+- **Small Cluster (Development / Pilot)**: 16-32 vCPUs, 64-128GB RAM. Suitable for up to 10 concurrent analysts and datasets under 5TB. Can run within the 100 vCPU Free Tier.
+- **Medium Cluster (Enterprise Departmental BI)**: 32-128 vCPUs, 128-512GB RAM. Suitable for 20-50 concurrent analysts and datasets ranging from 10TB to 50TB.
+- **Large Cluster (Production Lakehouse)**: 128-500+ vCPUs with auto-scaling executor pools to handle morning reporting bursts and heavy scheduled dbt/Spark transformations.

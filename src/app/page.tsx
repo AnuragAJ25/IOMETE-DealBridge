@@ -8,220 +8,160 @@ import {
   ArrowRight,
   ShieldCheck,
   Zap,
-  Database,
-  Cpu,
   Lock,
   ExternalLink,
   ChevronRight,
-  CheckCircle2,
   Sparkles,
   Server,
-  BarChart3,
-  Users,
   Compass,
   MonitorPlay,
-  Calculator,
-  Swords,
   GraduationCap,
+  HardDrive,
+  Database,
+  CheckCircle2,
 } from "lucide-react";
 import { ScrollReveal } from "@/components/common/ScrollReveal";
+import { HeroArchitectureVisual } from "@/components/landing/HeroArchitectureVisual";
+import { EcosystemLogoCarousel } from "@/components/landing/EcosystemLogoCarousel";
 
 export default function HomePage() {
-  const scrollToExplore = () => {
-    const el = document.getElementById("value-proposition");
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
   return (
-    <div className="space-y-16 lg:space-y-24">
-      {/* 1. Hero Section */}
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-sky-950 text-white p-8 sm:p-12 lg:p-16 border border-slate-800 shadow-2xl">
-        {/* Subtle Background Mesh */}
-        <div className="absolute inset-0 bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:24px_24px] opacity-15 pointer-events-none" />
+    <div className="space-y-12 lg:space-y-16 -mt-2">
+      {/* 1. HERO SECTION (Dark Navy Two-Column Layout) */}
+      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-950 via-[#0B132B] to-[#031B33] text-white p-6 sm:p-10 lg:p-14 border border-cyan-500/20 shadow-2xl">
+        {/* Subtle Ambient Radial Glows */}
+        <div className="absolute top-0 right-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:24px_24px] opacity-10 pointer-events-none" />
 
-        <div className="relative z-10 max-w-4xl space-y-6">
+        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          {/* LEFT COLUMN: Text, CTAs, and 3 Benefit Indicators (5 cols on lg) */}
+          <div className="lg:col-span-5 space-y-6">
+            {/* Small Badge */}
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-400/30 text-cyan-300 text-xs font-semibold backdrop-blur-sm"
+            >
+              <Sparkles className="h-3.5 w-3.5 text-cyan-400" />
+              <span>IOMETE DealBridge · Sales Companion</span>
+            </motion.div>
+
+            {/* Main Headline */}
+            <motion.h1
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.1 }}
+              className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-[1.12]"
+            >
+              Build a Modern, Sovereign Data Lakehouse{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-blue-400">
+                with IOMETE
+              </span>
+            </motion.h1>
+
+            {/* Supporting Text */}
+            <motion.p
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.2 }}
+              className="text-sm sm:text-base text-slate-300 leading-relaxed font-normal"
+            >
+              Make your data work for you — on your infrastructure, with your data, and for your business needs.
+            </motion.p>
+
+            {/* Two Prominent Buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.3 }}
+              className="flex flex-wrap items-center gap-3.5 pt-1"
+            >
+              {/* Button 1: Get Started -> /overview */}
+              <Link
+                href="/overview"
+                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-cyan-400 to-sky-500 hover:from-cyan-300 hover:to-sky-400 text-slate-950 font-bold text-sm shadow-[0_0_25px_rgba(6,182,212,0.4)] transition-all hover:scale-[1.03] active:scale-[0.98]"
+              >
+                <span>Get Started</span>
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+
+              {/* Button 2: Know More About IOMETE -> https://iomete.com/ in new tab */}
+              <a
+                href="https://iomete.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-5 py-3.5 rounded-2xl bg-white/5 hover:bg-white/10 text-white border border-slate-700 hover:border-cyan-400/50 font-semibold text-sm backdrop-blur-sm transition-all"
+              >
+                <span>Know More About IOMETE</span>
+                <ExternalLink className="h-4 w-4 text-cyan-400" />
+              </a>
+            </motion.div>
+
+            {/* Three Compact Benefit Indicators */}
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.4 }}
+              className="pt-4 border-t border-slate-800/80 space-y-2.5 text-xs"
+            >
+              <div className="flex items-center gap-2.5 text-slate-300 hover:text-white transition-colors group">
+                <div className="p-1 rounded-md bg-cyan-950/80 border border-cyan-800/50 text-cyan-400 shrink-0 group-hover:scale-105 transition-transform">
+                  <ShieldCheck className="h-3.5 w-3.5" />
+                </div>
+                <span className="font-medium">
+                  <strong>Your Infrastructure, Your Control</strong> — deployed in your private cloud or on-prem.
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2.5 text-slate-300 hover:text-white transition-colors group">
+                <div className="p-1 rounded-md bg-teal-950/80 border border-teal-800/50 text-teal-400 shrink-0 group-hover:scale-105 transition-transform">
+                  <Layers className="h-3.5 w-3.5" />
+                </div>
+                <span className="font-medium">
+                  <strong>Open Data Formats</strong> — 100% Apache Iceberg standard with zero lock-in.
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2.5 text-slate-300 hover:text-white transition-colors group">
+                <div className="p-1 rounded-md bg-sky-950/80 border border-sky-800/50 text-sky-400 shrink-0 group-hover:scale-105 transition-transform">
+                  <Server className="h-3.5 w-3.5" />
+                </div>
+                <span className="font-medium">
+                  <strong>Flexible Deployment</strong> — On-Premises, Private Cloud, or Public Cloud (VPC).
+                </span>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* RIGHT COLUMN: MAIN IOMETE ARCHITECTURE VISUAL (7 cols on lg) */}
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-500/10 border border-sky-400/20 text-sky-300 text-xs font-semibold"
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="lg:col-span-7 w-full"
           >
-            <Sparkles className="h-3.5 w-3.5 text-cyan-400" />
-            <span>IOMETE DealBridge · Sales Companion</span>
-          </motion.div>
-
-          <motion.h1
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.1 }}
-            className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.1]"
-          >
-            Make Your Data Work for You.{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-teal-300 to-cyan-200">
-              Without Losing Control.
-            </span>
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.2 }}
-            className="text-base sm:text-xl text-slate-300 leading-relaxed font-normal max-w-2xl"
-          >
-            Discover how IOMETE helps organizations build a modern, sovereign data lakehouse with control over their infrastructure, data and analytics workloads.
-          </motion.p>
-
-          {/* 2 Clear CTAs */}
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.3 }}
-            className="flex flex-wrap items-center gap-4 pt-2"
-          >
-            <Link
-              href="/why-iomete"
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-400 hover:to-cyan-400 text-slate-950 font-bold text-sm shadow-lg shadow-sky-500/25 transition-all hover:scale-[1.02] active:scale-[0.98]"
-            >
-              <span>Get Started</span>
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-
-            <button
-              onClick={scrollToExplore}
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-white/10 hover:bg-white/15 text-white border border-white/15 font-semibold text-sm backdrop-blur-sm transition-all"
-            >
-              <span>Know More About IOMETE</span>
-              <ChevronRight className="h-4 w-4 text-sky-400" />
-            </button>
-
-            <Link
-              href="https://iomete.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs text-slate-400 hover:text-white flex items-center gap-1.5 transition-colors pl-2"
-            >
-              <span>Official Website</span>
-              <ExternalLink className="h-3 w-3" />
-            </Link>
+            <HeroArchitectureVisual />
           </motion.div>
         </div>
-
-        {/* High-Quality Enterprise Technology Visual (Data Flow to Lakehouse & Business Insights) */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.96 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, delay: 0.35 }}
-          className="mt-10 pt-8 border-t border-slate-800/80"
-        >
-          <div className="bg-slate-900/80 rounded-2xl p-6 border border-slate-800 shadow-inner">
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                Sovereign Enterprise Architecture &amp; Insight Pipeline
-              </span>
-              <span className="text-[11px] text-cyan-400 font-mono bg-cyan-950/60 px-2.5 py-0.5 rounded-full border border-cyan-800/50">
-                Customer-Controlled VPC Perimeter
-              </span>
-            </div>
-
-            {/* Architecture Data Flow Diagram */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
-              {/* Step 1: Data Sources */}
-              <div className="p-4 rounded-xl bg-slate-950/70 border border-slate-800 space-y-2">
-                <div className="flex items-center gap-2 text-sky-400 font-semibold">
-                  <Database className="h-4 w-4" />
-                  <span>1. Business Sources</span>
-                </div>
-                <p className="text-[11px] text-slate-400 leading-normal">
-                  Transactional DBs (Postgres, MySQL), REST APIs, application logs, and streaming events.
-                </p>
-                <div className="pt-1 flex flex-wrap gap-1">
-                  <span className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 text-[9px] font-mono">
-                    PostgreSQL
-                  </span>
-                  <span className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 text-[9px] font-mono">
-                    Kafka
-                  </span>
-                  <span className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 text-[9px] font-mono">
-                    S3 Files
-                  </span>
-                </div>
-              </div>
-
-              {/* Step 2: Customer Storage & Iceberg */}
-              <div className="p-4 rounded-xl bg-slate-950/70 border border-sky-800/40 space-y-2 relative">
-                <div className="flex items-center gap-2 text-cyan-400 font-semibold">
-                  <Layers className="h-4 w-4" />
-                  <span>2. Apache Iceberg</span>
-                </div>
-                <p className="text-[11px] text-slate-400 leading-normal">
-                  Open table format stored in customer-owned S3, ADLS Gen2, or MinIO with zero lock-in.
-                </p>
-                <div className="pt-1 flex flex-wrap gap-1">
-                  <span className="px-1.5 py-0.5 rounded bg-sky-950 text-sky-300 text-[9px] font-mono">
-                    ACID Snapshots
-                  </span>
-                  <span className="px-1.5 py-0.5 rounded bg-sky-950 text-sky-300 text-[9px] font-mono">
-                    CMEK Encryption
-                  </span>
-                </div>
-              </div>
-
-              {/* Step 3: Decoupled Spark Engine */}
-              <div className="p-4 rounded-xl bg-slate-950/70 border border-slate-800 space-y-2">
-                <div className="flex items-center gap-2 text-teal-400 font-semibold">
-                  <Cpu className="h-4 w-4" />
-                  <span>3. Decoupled Compute</span>
-                </div>
-                <p className="text-[11px] text-slate-400 leading-normal">
-                  Auto-scaling Apache Spark clusters running inside your own VPC with automatic suspend.
-                </p>
-                <div className="pt-1 flex flex-wrap gap-1">
-                  <span className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 text-[9px] font-mono">
-                    Auto-Suspend
-                  </span>
-                  <span className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 text-[9px] font-mono">
-                    Zero Markups
-                  </span>
-                </div>
-              </div>
-
-              {/* Step 4: Business Insights & Teams */}
-              <div className="p-4 rounded-xl bg-slate-950/70 border border-emerald-800/40 space-y-2">
-                <div className="flex items-center gap-2 text-emerald-400 font-semibold">
-                  <BarChart3 className="h-4 w-4" />
-                  <span>4. Business Insights</span>
-                </div>
-                <p className="text-[11px] text-slate-400 leading-normal">
-                  Sub-second SQL queries, BI dashboards, and AI workloads driving business decisions.
-                </p>
-                <div className="pt-1 flex flex-wrap gap-1">
-                  <span className="px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-300 text-[9px] font-mono">
-                    ANSI SQL
-                  </span>
-                  <span className="px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-300 text-[9px] font-mono">
-                    PowerBI / Tableau
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
       </section>
 
-      {/* 2. Product Value Proposition & Architecture Strip (Factual & Verified) */}
-      <section id="value-proposition" className="space-y-8 scroll-mt-24">
+      {/* 2. CUSTOMER / ECOSYSTEM LOGO CAROUSEL */}
+      <EcosystemLogoCarousel />
+
+      {/* 3. VALUE PROPOSITION HIGHLIGHTS */}
+      <section className="space-y-8">
         <ScrollReveal>
-          <div className="text-center max-w-3xl mx-auto space-y-3">
+          <div className="text-center max-w-3xl mx-auto space-y-2.5">
             <h2 className="text-xs font-bold uppercase tracking-wider text-sky-600">
-              Core Principles
+              Platform Pillars
             </h2>
             <p className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
               A Sovereign Lakehouse Built on Open Standards
             </p>
-            <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
-              IOMETE combines the flexibility of open-source Apache Iceberg and Spark with enterprise-grade catalog, governance, and SQL workspaces—deployed directly within your own cloud perimeter.
+            <p className="text-sm text-slate-600 leading-relaxed">
+              IOMETE combines the power of Apache Iceberg and Spark with enterprise catalog, fine-grained access control, and sub-second SQL workspaces.
             </p>
           </div>
         </ScrollReveal>
@@ -236,7 +176,7 @@ export default function HomePage() {
                 Open Table Standard
               </h3>
               <p className="text-xs text-slate-600 leading-relaxed">
-                Stored in 100% open Apache Iceberg format. Full ACID transactions, schema evolution, and zero risk of proprietary vendor lock-in.
+                Stored in 100% open Apache Iceberg format. Full ACID transactions, snapshot time-travel, and zero proprietary lock-in.
               </p>
             </div>
 
@@ -248,7 +188,7 @@ export default function HomePage() {
                 Complete Data Sovereignty
               </h3>
               <p className="text-xs text-slate-600 leading-relaxed">
-                Deploy inside your AWS VPC, Azure VNet, GCP, or on-prem Kubernetes. Your data never leaves your infrastructure boundary.
+                Deploy inside your private AWS VPC, Azure VNet, GCP, or on-prem Kubernetes. Your data never leaves your security perimeter.
               </p>
             </div>
 
@@ -260,7 +200,7 @@ export default function HomePage() {
                 Transparent Economics
               </h3>
               <p className="text-xs text-slate-600 leading-relaxed">
-                Pay raw cloud infrastructure directly with zero credit markups. Automatic cluster suspension stops idle compute costs.
+                Pay raw cloud infrastructure directly with zero credit markup. Dynamic cluster suspend eliminates idle compute spend.
               </p>
             </div>
 
@@ -272,49 +212,14 @@ export default function HomePage() {
                 Enterprise Governance
               </h3>
               <p className="text-xs text-slate-600 leading-relaxed">
-                Apache Ranger role-based access control, row/column masking, audit logging, and Customer-Managed Encryption Keys (CMEK).
+                Apache Ranger role-based access control, row/column masking, audit logging, and Customer-Managed KMS Encryption Keys.
               </p>
             </div>
           </div>
         </ScrollReveal>
       </section>
 
-      {/* 3. Verified Technology Foundation Strip (No fake customer logos) */}
-      <section className="p-6 sm:p-8 rounded-3xl bg-slate-100/70 border border-slate-200/80">
-        <div className="text-center space-y-3">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-            Built on Battle-Tested Open Standards &amp; Enterprise Cloud
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10 pt-2 text-slate-600 font-semibold text-xs sm:text-sm">
-            <span className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-sky-500" />
-              Apache Iceberg
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-cyan-500" />
-              Apache Spark
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-indigo-500" />
-              Kubernetes
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-teal-500" />
-              Apache Ranger
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-amber-500" />
-              Standard ANSI SQL
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-slate-500" />
-              S3 / ADLS / GCS Storage
-            </span>
-          </div>
-        </div>
-      </section>
-
-      {/* 4. Sales Enablement Storytelling Pathways */}
+      {/* 4. GUIDED EVALUATION MODULES */}
       <section className="space-y-6">
         <ScrollReveal>
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
@@ -323,7 +228,7 @@ export default function HomePage() {
                 Explore DealBridge
               </h2>
               <p className="text-2xl font-black text-slate-900 tracking-tight">
-                Guided Evaluation Modules
+                Guided Sales Enablement Modules
               </p>
             </div>
             <Link
@@ -349,7 +254,7 @@ export default function HomePage() {
                 Why IOMETE?
               </h3>
               <p className="text-xs text-slate-500 leading-relaxed">
-                Visual storytelling comparing traditional warehouse challenges to the modern sovereign lakehouse.
+                Visual storytelling comparing traditional warehouse challenges to the sovereign lakehouse.
               </p>
               <span className="text-[11px] font-semibold text-sky-600 flex items-center gap-1 pt-1">
                 Explore story <ChevronRight className="h-3 w-3" />
@@ -367,7 +272,7 @@ export default function HomePage() {
                 Platform Tour &amp; Demo
               </h3>
               <p className="text-xs text-slate-500 leading-relaxed">
-                Walkthrough of the SQL editor, data catalog, lakehouses, Spark compute, and AI assistance.
+                Tour the SQL editor, data catalog, lakehouses, Spark compute, and AI assistance.
               </p>
               <span className="text-[11px] font-semibold text-sky-600 flex items-center gap-1 pt-1">
                 Tour platform <ChevronRight className="h-3 w-3" />
