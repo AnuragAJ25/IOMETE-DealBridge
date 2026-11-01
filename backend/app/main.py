@@ -40,12 +40,21 @@ app = FastAPI(
 )
 
 # Configure CORS Middleware for Next.js frontend
+cors_origins = list(settings.CORS_ORIGINS)
+if "https://iomete-dealbridge.netlify.app" not in cors_origins:
+    cors_origins.append("https://iomete-dealbridge.netlify.app")
+if "https://iomete-dealbridge.netlify.app/" not in cors_origins:
+    cors_origins.append("https://iomete-dealbridge.netlify.app/")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.CORS_ORIGINS,
+    allow_origins=cors_origins,
+    allow_origin_regex=r"^https:\/\/([a-zA-Z0-9_-]+--)?iomete-dealbridge\.netlify\.app$",
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "OPTIONS", "HEAD", "PUT", "DELETE", "PATCH"],
     allow_headers=["*"],
+    expose_headers=["*"],
+    max_age=86400,
 )
 
 # Root-level health endpoint (as explicitly requested: GET /health)
