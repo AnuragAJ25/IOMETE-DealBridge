@@ -80,21 +80,11 @@ export default function MeetingSummaryPage() {
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 max-w-6xl mx-auto">
       <PageHeader
-        badge="Stage 7 of 7 • Close & Follow-Up"
-        badgeVariant="success"
-        title="Executive Meeting Summary & Mutual Action Plan"
-        subtitle={`Summary of agreed findings, financial savings model, and 14-day production PoC charter for ${sessionData.buyerCompany}.`}
-        breadcrumbs={[{ label: "DealBridge", href: "/" }, { label: "Meeting Summary" }]}
-        actions={
-          <div className="flex items-center gap-2">
-            <Button variant="primary" size="sm" onClick={handleLaunchPoC}>
-              <Sparkles className="h-4 w-4" />
-              <span>{pocAccepted ? "PoC Activated!" : "Accept Mutual Action Plan"}</span>
-            </Button>
-          </div>
-        }
+        title="Executive Meeting Summary & Follow-Up"
+        subtitle={`Summary of agreed findings, financial model, and next steps for ${sessionData.buyerCompany}.`}
+        badgeText="Executive Recap"
       />
 
       {/* Top Banner: Deal Value Summary */}

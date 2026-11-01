@@ -2,300 +2,259 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { usePresentation } from "@/context/PresentationContext";
 import { PageHeader } from "@/components/common/PageHeader";
-import { SectionHeader } from "@/components/common/SectionHeader";
-import { FeatureCard } from "@/components/common/FeatureCard";
-import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
+import { ScrollReveal } from "@/components/common/ScrollReveal";
+import { UseCaseFinder } from "@/components/use-cases/UseCaseFinder";
 import {
   Compass,
-  BarChart3,
-  Cpu,
-  ShieldCheck,
-  TrendingDown,
-  Sparkles,
+  Landmark,
+  ShoppingCart,
+  HeartPulse,
+  Factory,
+  Radio,
   ArrowRight,
   CheckCircle2,
-  Database,
   Layers,
-  Zap,
+  Database,
+  Cpu,
+  ShieldCheck,
+  BarChart3,
+  ChevronRight,
   SlidersHorizontal,
 } from "lucide-react";
-import { ProblemStorytelling } from "@/components/storytelling/ProblemStorytelling";
-import { UseCaseFinder } from "@/components/use-cases/UseCaseFinder";
 
-interface UseCase {
+interface IndustryCard {
   id: string;
-  title: string;
-  category: "BI & SQL" | "Batch ETL / Spark" | "Data Governance" | "Cost Reduction";
-  painPoint: string;
-  solution: string;
-  outcome: string;
-  metrics: { label: string; value: string }[];
-  tags: string[];
+  industry: string;
+  icon: React.ReactNode;
+  accentColor: string;
+  challenge: string;
+  fit: string;
+  dataJourney: string[];
+  components: string[];
+  scenarioRoute: string;
 }
 
 export default function UseCasesPage() {
-  const { sessionData, goToStage } = usePresentation();
-  const [activeView, setActiveView] = useState<"finder" | "use-cases" | "dilemma">("finder");
-  const [filter, setFilter] = useState<string>("All");
-  const [selectedCaseId, setSelectedCaseId] = useState<string>("lakehouse");
+  const [activeTab, setActiveTab] = useState<"cards" | "finder">("cards");
 
-  const useCases: UseCase[] = [
+  const industries: IndustryCard[] = [
     {
-      id: "lakehouse",
-      title: "Warehouse Cost Deflation & Iceberg Migration",
-      category: "Cost Reduction",
-      painPoint: `Uncontrolled Snowflake compute credits burning $42k/mo; lack of predictability during quarterly reporting spikes.`,
-      solution: `Deploy IOMETE directly on top of raw S3 parquet files converted to Apache Iceberg format. Auto-suspend clusters during off-peak hours.`,
-      outcome: `Slash monthly compute bill from $42,000 to $13,200 with zero changes to existing Tableau dashboards.`,
-      metrics: [
-        { label: "Cost Reduction", value: "68.4%" },
-        { label: "Migration Time", value: "3 Weeks" },
+      id: "banking",
+      industry: "Banking and Financial Services",
+      icon: <Landmark className="h-5 w-5 text-sky-600" />,
+      accentColor: "border-sky-200 bg-sky-50/40",
+      challenge:
+        "Strict banking regulations prohibit storing core transaction records in multi-tenant SaaS environments. Teams struggle with high credit markups for large-scale nightly fraud models.",
+      fit: "Deploy IOMETE in a private AWS/Azure VPC with Apache Ranger column masking, KMS CMEK encryption, and sub-second SQL on Apache Iceberg with zero data egress.",
+      dataJourney: [
+        "Core Banking CDC & SWIFT Logs",
+        "Encrypted S3 Private Bucket",
+        "Apache Iceberg ACID Tables",
+        "PySpark Fraud Risk Models",
       ],
-      tags: ["Iceberg", "Snowflake Replacement", "Cost Control"],
+      components: ["Apache Iceberg", "Apache Ranger RBAC", "AWS KMS CMEK", "PySpark"],
+      scenarioRoute: "/demo",
     },
     {
-      id: "bi-acceleration",
-      title: "Sub-Second BI & Interactive Dashboards",
-      category: "BI & SQL",
-      painPoint: `Executive dashboards taking 18-35 seconds to refresh on Monday mornings due to cluster concurrency bottlenecks.`,
-      solution: `Vectorized query execution with intelligent memory caching across distributed Spark SQL worker nodes.`,
-      outcome: `Sub-850ms P95 query response time for 35 concurrent analysts simultaneously querying 120 TB datasets.`,
-      metrics: [
-        { label: "P95 Latency", value: "<850ms" },
-        { label: "Concurrent Users", value: "100+" },
+      id: "retail",
+      industry: "Retail and E-Commerce",
+      icon: <ShoppingCart className="h-5 w-5 text-emerald-600" />,
+      accentColor: "border-emerald-200 bg-emerald-50/40",
+      challenge:
+        "High query concurrency during promotional events (Black Friday) causes sudden cloud warehouse cluster auto-scaling spikes and massive credit bills.",
+      fit: "Elastic auto-scaling Spark clusters run directly on raw cloud compute instances with automatic suspend after 5 minutes of inactivity, slashing idle spend.",
+      dataJourney: [
+        "Store POS & Clickstream Kafka",
+        "Micro-batch Ingestion",
+        "Iceberg Partitioned by Date",
+        "PowerBI Merchant Dashboards",
       ],
-      tags: ["Tableau", "PowerBI", "Sub-Second SQL"],
+      components: ["Kafka Streaming", "Dynamic Cluster Sleep", "Iceberg Hidden Partitioning", "Tableau/PowerBI"],
+      scenarioRoute: "/demo",
     },
     {
-      id: "ai-feature-store",
-      title: "Unified AI / ML Feature Engineering",
-      category: "Batch ETL / Spark",
-      painPoint: `Data science team forced to export data out of the warehouse into CSV/Parquet before running PySpark models.`,
-      solution: `Zero-copy architecture allows data scientists to read directly from Apache Iceberg tables using native Python and PySpark libraries.`,
-      outcome: `Eliminated 4 hours of daily data duplication and zero egress costs when training customer credit risk models.`,
-      metrics: [
-        { label: "ETL Time Saved", value: "4 hrs/day" },
-        { label: "Egress Fees", value: "$0.00" },
+      id: "healthcare",
+      industry: "Healthcare and Life Sciences",
+      icon: <HeartPulse className="h-5 w-5 text-rose-600" />,
+      accentColor: "border-rose-200 bg-rose-50/40",
+      challenge:
+        "HIPAA and patient privacy guidelines mandate zero data retention by third-party vendors. Genomic and clinical trial files are too massive for proprietary warehouse ingestion.",
+      fit: "Zero Data Retention architecture where data planes remain 100% inside the hospital or pharma cloud account. Native Iceberg format allows direct Python/R analysis.",
+      dataJourney: [
+        "EHR Records & DICOM Metadata",
+        "On-Prem / Private VPC Lake",
+        "Fine-Grained Patient Anonymization",
+        "Clinical Research Analytics",
       ],
-      tags: ["PySpark", "Machine Learning", "Zero-Copy"],
+      components: ["HIPAA Compliance", "Zero Data Retention", "Ranger Row Filtering", "Python/Pandas/R"],
+      scenarioRoute: "/demo",
     },
     {
-      id: "fintech-governance",
-      title: "FinTech Compliance & Immutable Audit Trails",
-      category: "Data Governance",
-      painPoint: `Strict regulatory demands for row-level PII masking and immutable historical audit snapshots for SEC/FINRA compliance.`,
-      solution: `Integrated Apache Ranger RBAC with time-travel query syntax, enabling point-in-time state reconstruction with 100% precision.`,
-      outcome: `Passed InfoSec and regulatory audit with zero findings; automated column-level hashing for social security numbers.`,
-      metrics: [
-        { label: "Compliance", value: "SOC2 Type II" },
-        { label: "Audit Resolution", value: "Instant" },
+      id: "manufacturing",
+      industry: "Manufacturing and Supply Chain",
+      icon: <Factory className="h-5 w-5 text-amber-600" />,
+      accentColor: "border-amber-200 bg-amber-50/40",
+      challenge:
+        "IoT sensor streams from global plant machinery generate terabytes of time-series telemetry. Extracting historical sensor data from proprietary warehouses is cost-prohibitive.",
+      fit: "Stream IoT telemetry directly into Iceberg tables. Query years of historical equipment logs using Iceberg snapshot time-travel to predict component wear.",
+      dataJourney: [
+        "Plant IoT Telemetry & MQTT",
+        "Blob / S3 Tiered Storage",
+        "Iceberg Time-Travel Snapshots",
+        "Predictive Maintenance Alerts",
       ],
-      tags: ["Ranger RBAC", "SOC2", "Time-Travel"],
+      components: ["Iceberg Time-Travel", "Distributed Spark Engine", "MQTT Stream Connector", "Grafana Alerting"],
+      scenarioRoute: "/demo",
+    },
+    {
+      id: "telecom",
+      industry: "Telecommunications",
+      icon: <Radio className="h-5 w-5 text-indigo-600" />,
+      accentColor: "border-indigo-200 bg-indigo-50/40",
+      challenge:
+        "Call Detail Records (CDRs) and network traffic logs exceed hundreds of billions of rows monthly. Traditional data warehouses become unmanageably expensive at this scale.",
+      fit: "Decoupled architecture scales storage on low-cost cloud object storage while running vectorized Spark queries only when running network performance analysis.",
+      dataJourney: [
+        "Tower CDRs & NetFlow Packets",
+        "Object Storage Deep Archive",
+        "Compacted Iceberg Tables",
+        "Network Optimization Analytics",
+      ],
+      components: ["Vectorized Query Cache", "High-Throughput Ingestion", "Auto-Compaction", "Network QoS Dashboard"],
+      scenarioRoute: "/demo",
     },
   ];
 
-  const filteredCases =
-    filter === "All" ? useCases : useCases.filter((c) => c.category === filter);
-
-  const activeCase = useCases.find((c) => c.id === selectedCaseId) || useCases[0];
-
   return (
-    <div className="space-y-8">
+    <div className="space-y-12 max-w-6xl mx-auto">
+      {/* Page Header */}
       <PageHeader
-        badge="Stage 1 of 7 • Discovery"
-        badgeVariant="default"
-        title="Interactive Use-Case Discovery"
-        subtitle={`Diagnosing high-impact workloads and architectural friction points for ${sessionData.buyerCompany}.`}
-        breadcrumbs={[{ label: "DealBridge", href: "/" }, { label: "Use Cases" }]}
-        actions={
-          <div className="flex items-center gap-2">
-            <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
-              <button
-                onClick={() => setActiveView("finder")}
-                className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                  activeView === "finder"
-                    ? "bg-sky-600 text-white shadow-xs"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                Use-Case Finder
-              </button>
-              <button
-                onClick={() => setActiveView("use-cases")}
-                className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                  activeView === "use-cases"
-                    ? "bg-white text-slate-900 shadow-xs"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                Workload Blueprints
-              </button>
-              <button
-                onClick={() => setActiveView("dilemma")}
-                className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                  activeView === "dilemma"
-                    ? "bg-white text-slate-900 shadow-xs"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                Platform Dilemma Story
-              </button>
-            </div>
-
-            <Link href="/architecture">
-              <Button variant="primary" size="sm">
-                <span>Next: Lakehouse Architecture</span>
-                <ArrowRight className="h-4 w-4 ml-1" />
-              </Button>
-            </Link>
-          </div>
-        }
+        title="Industry Use Cases & Discovery"
+        subtitle="Explore how IOMETE's sovereign lakehouse architecture fits real-world industry requirements and operational constraints."
+        badgeText="Vertical Discovery"
       />
 
-      {activeView === "finder" ? (
-        <UseCaseFinder />
-      ) : activeView === "dilemma" ? (
-        <ProblemStorytelling />
-      ) : (
-        <>
-          {/* Filter Chips */}
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider mr-2">
-              Filter Workload:
-            </span>
-            {["All", "Cost Reduction", "BI & SQL", "Batch ETL / Spark", "Data Governance"].map(
-              (cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setFilter(cat)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-                    filter === cat
-                      ? "bg-sky-600 text-white shadow-sm"
-                      : "bg-white text-slate-600 border border-slate-200/80 hover:bg-slate-50"
-                  }`}
-                >
-                  {cat}
-                </button>
-              )
-            )}
-          </div>
+      {/* View Switcher: Use-Case Cards vs. Finder */}
+      <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setActiveTab("cards")}
+            className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
+              activeTab === "cards"
+                ? "bg-slate-900 text-white shadow-sm"
+                : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+            }`}
+          >
+            5 Industry Blueprints
+          </button>
+          <button
+            onClick={() => setActiveTab("finder")}
+            className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 ${
+              activeTab === "finder"
+                ? "bg-slate-900 text-white shadow-sm"
+                : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+            }`}
+          >
+            <Compass className="h-3.5 w-3.5" />
+            <span>Interactive Use-Case Finder</span>
+          </button>
+        </div>
+        <span className="text-xs text-slate-500 hidden sm:inline">
+          Grounded in enterprise customer architectures
+        </span>
+      </div>
 
-          {/* Grid of Use Cases + Deep Solution Inspector */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            {/* Left 7 Cols: Cards */}
-            <div className="lg:col-span-7 space-y-3">
-              {filteredCases.map((uc) => {
-                const isSelected = uc.id === selectedCaseId;
-                return (
-                  <div
-                    key={uc.id}
-                    onClick={() => setSelectedCaseId(uc.id)}
-                    className={`p-5 rounded-2xl border-2 transition-all cursor-pointer ${
-                      isSelected
-                        ? "border-sky-500 bg-sky-50/40 shadow-sm"
-                        : "bg-white border-slate-200/80 hover:border-slate-300 hover:bg-slate-50/50"
-                    }`}
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <div className="flex items-center gap-2 mb-1.5">
-                          <Badge variant="indigo" size="sm">
-                            {uc.category}
-                          </Badge>
-                          {uc.tags.map((t, i) => (
-                            <span key={i} className="text-[10px] text-slate-400">
-                              #{t}
-                            </span>
-                          ))}
-                        </div>
-                        <h3 className="text-base font-bold text-slate-900 tracking-tight">
-                          {uc.title}
-                        </h3>
-                        <p className="text-xs text-slate-500 mt-1 line-clamp-2">
-                          <strong className="text-slate-700">Problem:</strong> {uc.painPoint}
-                        </p>
+      {/* View 1: 5 Industry Cards */}
+      {activeTab === "cards" ? (
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {industries.map((ind) => (
+              <ScrollReveal key={ind.id}>
+                <div className="p-6 rounded-3xl bg-white border border-slate-200/90 shadow-sm hover:shadow-md transition-all flex flex-col justify-between space-y-5 h-full">
+                  <div className="space-y-4">
+                    {/* Header */}
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center">
+                        {ind.icon}
                       </div>
-                      <ArrowRight
-                        className={`h-4 w-4 shrink-0 transition-transform ${
-                          isSelected ? "text-sky-600 translate-x-1" : "text-slate-300"
-                        }`}
-                      />
+                      <div>
+                        <h3 className="font-bold text-slate-900 text-sm">
+                          {ind.industry}
+                        </h3>
+                        <span className="text-[10px] text-slate-400 font-mono">
+                          Enterprise Blueprint
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
 
-            {/* Right 5 Cols: Deep Solution Blueprint for Selected Use Case */}
-            <div className="lg:col-span-5 space-y-4">
-              <div className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/80 shadow-sm space-y-5 sticky top-20">
-                <div className="space-y-1">
-                  <Badge variant="default" size="sm">
-                    Target Solution Blueprint
-                  </Badge>
-                  <h3 className="text-lg font-bold text-slate-900 tracking-tight mt-2">
-                    {activeCase.title}
-                  </h3>
-                  <p className="text-xs text-slate-500">{activeCase.category}</p>
-                </div>
-
-                {/* Pain Point vs Solution comparison */}
-                <div className="space-y-3 pt-2 border-t border-slate-100">
-                  <div className="p-3.5 rounded-xl bg-rose-50/60 border border-rose-100 space-y-1">
-                    <span className="text-[10px] font-bold text-rose-700 uppercase tracking-wider block">
-                      Current Pain Point
-                    </span>
-                    <p className="text-xs text-rose-950 font-medium leading-relaxed">
-                      {activeCase.painPoint}
-                    </p>
-                  </div>
-
-                  <div className="p-3.5 rounded-xl bg-sky-50/60 border border-sky-100 space-y-1">
-                    <span className="text-[10px] font-bold text-sky-700 uppercase tracking-wider block">
-                      The IOMETE Solution
-                    </span>
-                    <p className="text-xs text-sky-950 font-medium leading-relaxed">
-                      {activeCase.solution}
-                    </p>
-                  </div>
-
-                  <div className="p-3.5 rounded-xl bg-emerald-50/60 border border-emerald-100 space-y-1">
-                    <span className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider block">
-                      Measurable Business Outcome
-                    </span>
-                    <p className="text-xs text-emerald-950 font-medium leading-relaxed">
-                      {activeCase.outcome}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Metrics */}
-                <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100">
-                  {activeCase.metrics.map((m, idx) => (
-                    <div key={idx} className="bg-slate-50 p-2.5 rounded-xl text-center">
-                      <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-semibold">
-                        {m.label}
+                    {/* Challenge */}
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-rose-600">
+                        Industry Challenge:
                       </span>
-                      <span className="text-lg font-extrabold text-slate-900">{m.value}</span>
+                      <p className="text-xs text-slate-600 leading-relaxed">
+                        {ind.challenge}
+                      </p>
                     </div>
-                  ))}
-                </div>
 
-                <div className="pt-2">
-                  <Link href="/business-case">
-                    <Button variant="primary" size="sm" className="w-full justify-center">
-                      <span>Calculate Financial Impact</span>
-                      <ArrowRight className="h-3.5 w-3.5 ml-1" />
-                    </Button>
-                  </Link>
+                    {/* How IOMETE Fits */}
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-sky-600">
+                        How IOMETE Fits:
+                      </span>
+                      <p className="text-xs text-slate-600 leading-relaxed">
+                        {ind.fit}
+                      </p>
+                    </div>
+
+                    {/* Simplified Data Journey */}
+                    <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100 space-y-1.5">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">
+                        Simplified Data Journey:
+                      </span>
+                      <div className="space-y-1 text-[11px] text-slate-700">
+                        {ind.dataJourney.map((step, sIdx) => (
+                          <div key={sIdx} className="flex items-center gap-2">
+                            <span className="text-sky-500 font-bold text-[10px]">{sIdx + 1}.</span>
+                            <span>{step}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Components & CTA */}
+                  <div className="pt-3 border-t border-slate-100 space-y-3">
+                    <div className="flex flex-wrap gap-1">
+                      {ind.components.map((c, i) => (
+                        <span
+                          key={i}
+                          className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 font-mono text-[9px]"
+                        >
+                          {c}
+                        </span>
+                      ))}
+                    </div>
+
+                    <Link
+                      href={ind.scenarioRoute}
+                      className="w-full inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold transition-colors"
+                    >
+                      <span>Explore Scenario in Demo</span>
+                      <ChevronRight className="h-3.5 w-3.5" />
+                    </Link>
+                  </div>
                 </div>
-              </div>
-            </div>
+              </ScrollReveal>
+            ))}
           </div>
-        </>
+        </div>
+      ) : (
+        /* View 2: Deterministic Use-Case Finder */
+        <div className="space-y-6">
+          <UseCaseFinder />
+        </div>
       )}
     </div>
   );

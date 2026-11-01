@@ -17,8 +17,19 @@ export interface PresentationStage {
 
 export const PRESENTATION_STAGES: PresentationStage[] = [
   {
-    id: "use-cases",
+    id: "why-iomete",
     number: 1,
+    title: "Why IOMETE? Visual Storytelling",
+    shortTitle: "Why IOMETE?",
+    route: "/why-iomete",
+    durationMin: 7,
+    category: "Discovery",
+    sellerGoal: "Walk buyer through traditional warehouse challenges and the sovereign lakehouse vision.",
+    buyerFocus: "Understand data sovereignty, cost predictability, and open Apache Iceberg storage.",
+  },
+  {
+    id: "use-cases",
+    number: 2,
     title: "Discovery & Use-Case Mapping",
     shortTitle: "Use Cases",
     route: "/use-cases",
@@ -29,7 +40,7 @@ export const PRESENTATION_STAGES: PresentationStage[] = [
   },
   {
     id: "architecture",
-    number: 2,
+    number: 3,
     title: "Modern Lakehouse Architecture",
     shortTitle: "Architecture",
     route: "/architecture",
@@ -40,7 +51,7 @@ export const PRESENTATION_STAGES: PresentationStage[] = [
   },
   {
     id: "demo",
-    number: 3,
+    number: 4,
     title: "Live Platform Tour & Experience",
     shortTitle: "Product Demo",
     route: "/demo",
@@ -50,26 +61,15 @@ export const PRESENTATION_STAGES: PresentationStage[] = [
     buyerFocus: "Assess UX simplicity for data engineers, analysts, and business users.",
   },
   {
-    id: "security",
-    number: 4,
-    title: "Enterprise Trust & Governance",
-    shortTitle: "Security",
-    route: "/security",
-    durationMin: 6,
-    category: "Validation",
-    sellerGoal: "Highlight Apache Ranger RBAC, SOC2 Type II, HIPAA, and Zero Data Retention.",
-    buyerFocus: "Satisfy InfoSec compliance and data sovereignty in client's own cloud.",
-  },
-  {
     id: "business-case",
     number: 5,
-    title: "TCO Reduction & ROI Modeling",
+    title: "Pricing & Business Case Calculator",
     shortTitle: "TCO & ROI",
     route: "/business-case",
     durationMin: 8,
     category: "Economics",
-    sellerGoal: "Prove 70%+ compute savings versus Snowflake or Databricks on identical workloads.",
-    buyerFocus: "Calculate annual budget impact and 3-year Total Cost of Ownership.",
+    sellerGoal: "Model potential infrastructure savings based on customer-entered operational assumptions.",
+    buyerFocus: "Calculate annual budget impact and 3-year Total Cost of Ownership estimates.",
   },
   {
     id: "competitors",

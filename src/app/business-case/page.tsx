@@ -98,23 +98,11 @@ export default function BusinessCasePage() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 max-w-6xl mx-auto">
       <PageHeader
-        badge="Stage 5 of 7 • Business Case"
-        badgeVariant="default"
-        title="Interactive Business Case & ROI Estimator"
-        subtitle={`Evaluate potential monthly and 3-year financial models based on editable operational assumptions for ${sessionData.buyerCompany}.`}
-        breadcrumbs={[{ label: "DealBridge", href: "/" }, { label: "Business Case" }]}
-        actions={
-          <div className="flex items-center gap-2">
-            <Link href="/competitors">
-              <Button variant="primary" size="sm">
-                <span>Next: Competitive Landscape</span>
-                <ArrowRight className="h-4 w-4 ml-1" />
-              </Button>
-            </Link>
-          </div>
-        }
+        title="Pricing & Business Case Calculator"
+        subtitle="Evaluate potential monthly and annualized financial models based on editable operational assumptions. Contact IOMETE for a tailored quote."
+        badgeText="Commercial Evaluation"
       />
 
       {/* Mandatory Pricing & Guarantee Disclaimer */}

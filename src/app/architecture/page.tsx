@@ -134,24 +134,25 @@ export default function ArchitecturePage() {
   const activeNode = nodes.find((n) => n.id === activeNodeId) || nodes[1];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 max-w-6xl mx-auto">
       <PageHeader
-        badge="Stage 2 of 7 • Lakehouse Architecture"
-        badgeVariant="default"
-        title="Interactive Lakehouse Architecture"
-        subtitle="Explore the decoupled, open Apache Iceberg architecture. Click any architectural tier to inspect technical specifications."
-        breadcrumbs={[{ label: "DealBridge", href: "/" }, { label: "Architecture" }]}
-        actions={
-          <div className="flex items-center gap-2">
-            <Link href="/demo">
-              <Button variant="primary" size="sm">
-                <span>Next: Live Product Tour</span>
-                <ArrowRight className="h-4 w-4 ml-1" />
-              </Button>
-            </Link>
-          </div>
-        }
+        title="Interactive Architecture Explorer"
+        subtitle="Explore IOMETE's decoupled lakehouse architecture. Click nodes to inspect specifications, data flows, and security boundaries."
+        badgeText="Conceptual System Design"
       />
+
+      {/* Conceptual Architecture Disclaimer */}
+      <div className="p-3.5 rounded-2xl bg-sky-50/80 border border-sky-200/80 flex items-center justify-between gap-3 text-xs text-sky-900">
+        <div className="flex items-center gap-2">
+          <Layers className="h-4 w-4 text-sky-600 shrink-0" />
+          <span>
+            <strong>Conceptual Architecture Illustration:</strong> Represents the decoupled logical design of IOMETE running in a customer VPC on open Apache Iceberg and Spark.
+          </span>
+        </div>
+        <span className="text-[11px] font-mono text-sky-700 bg-sky-100/70 px-2.5 py-0.5 rounded-full border border-sky-200 shrink-0 hidden sm:inline">
+          Customer VPC Perimeter
+        </span>
+      </div>
 
       {/* Architectural Comparison Toggle */}
       <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>

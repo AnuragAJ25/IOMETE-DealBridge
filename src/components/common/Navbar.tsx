@@ -10,60 +10,44 @@ import {
   Menu,
   X,
   FileText,
-  Clock,
-  Shield,
-  BarChart3,
-  MonitorPlay,
-  Cpu,
-  BookOpen,
-  Users,
+  Sliders,
+  ExternalLink,
+  Presentation,
   Compass,
+  MonitorPlay,
+  Play,
+  GraduationCap,
+  Calculator,
+  Swords,
+  ChevronRight,
 } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { Tooltip } from "@/components/ui/Tooltip";
-import { ProgressIndicator } from "./ProgressIndicator";
 
 export function Navbar() {
   const pathname = usePathname();
-  const {
-    role,
-    setRole,
-    currentStage,
-    currentStageIndex,
-    stages,
-    isNotesOpen,
-    setIsNotesOpen,
-    meetingTimeElapsed,
-  } = usePresentation();
-
+  const isLandingPage = pathname === "/";
+  const { isNotesOpen, setIsNotesOpen } = usePresentation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
-  };
-
   const navLinks = [
-    { label: "Dashboard", href: "/dashboard" },
-    { label: "Guided Meeting", href: "/meeting" },
+    { label: "Overview", href: "/overview" },
+    { label: "Why IOMETE?", href: "/why-iomete" },
+    { label: "Demo Tour", href: "/demo" },
     { label: "Architecture", href: "/architecture" },
     { label: "Use Cases", href: "/use-cases" },
-    { label: "Live Demo", href: "/demo" },
-    { label: "Business Case", href: "/business-case" },
-    { label: "Security", href: "/security" },
-    { label: "Why IOMETE?", href: "/competitors" },
-    { label: "Executive Summary", href: "/meeting-summary" },
+    { label: "Calculator", href: "/business-case" },
+    { label: "Comparison", href: "/competitors" },
+    { label: "Learn", href: "/learn" },
   ];
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-slate-200/80 bg-white/90 backdrop-blur-md">
+    <header className="sticky top-0 z-40 w-full border-b border-slate-200/80 bg-white/95 backdrop-blur-md transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
         {/* Left: Brand Identity */}
         <div className="flex items-center gap-3">
           <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-slate-950 via-slate-900 to-sky-950 text-sky-400 shadow-md shadow-sky-900/10 border border-slate-800">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-slate-950 via-slate-900 to-sky-950 text-sky-400 shadow-md shadow-sky-950/10 border border-slate-800">
               <Layers className="h-5 w-5 group-hover:scale-105 transition-transform" />
             </div>
             <div>
@@ -78,76 +62,102 @@ export function Navbar() {
               </p>
             </div>
           </Link>
-
-          {/* Role badge */}
-          <div className="hidden sm:block ml-2">
-            <Badge
-              variant={role === "seller" ? "default" : "success"}
-              size="sm"
-              className="cursor-pointer"
-              onClick={() => setRole(role === "seller" ? "buyer" : "seller")}
-            >
-              <span className="inline-block w-1.5 h-1.5 rounded-full bg-current animate-pulse mr-1" />
-              {role === "seller" ? "Seller Pilot" : "Buyer Sandbox"}
-            </Badge>
-          </div>
         </div>
 
-        {/* Center: Stage Progress Tracker (Desktop) */}
-        <div className="hidden lg:flex items-center gap-3 bg-slate-50 border border-slate-200/80 px-3.5 py-1.5 rounded-full">
-          <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
-            Stage {currentStageIndex + 1}/{stages.length}:
-          </span>
-          <span className="text-xs font-semibold text-slate-800 max-w-[150px] truncate">
-            {currentStage.shortTitle}
-          </span>
-          <ProgressIndicator variant="compact" />
-        </div>
-
-        {/* Right: Actions & Role switcher */}
-        <div className="flex items-center gap-2.5">
-          {/* Pacing Clock */}
-          <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 text-xs font-mono font-medium">
-            <Clock className="h-3.5 w-3.5 text-sky-600" />
-            <span>{formatTime(meetingTimeElapsed)}</span>
-          </div>
-
-          {/* Teleprompter Notes Toggle */}
-          <Tooltip content="Toggle Seller Talking Points">
-            <button
-              onClick={() => setIsNotesOpen(!isNotesOpen)}
-              className={`p-2 rounded-lg border text-xs font-medium transition-colors cursor-pointer ${
-                isNotesOpen
-                  ? "bg-sky-50 text-sky-700 border-sky-300 shadow-sm"
-                  : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
-              }`}
+        {/* Center: Clean Marketing Links (on landing) or Current Breadcrumb (on workspace) */}
+        {isLandingPage ? (
+          <nav className="hidden md:flex items-center gap-1">
+            <Link
+              href="/why-iomete"
+              className="px-3.5 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-xl transition-colors"
             >
-              <FileText className="h-4 w-4" />
-            </button>
-          </Tooltip>
-
-          {/* Quick Presenter Console Link */}
-          <Link href="/presenter" className="hidden sm:inline-block">
-            <Button variant="secondary" size="sm">
-              <Sparkles className="h-3.5 w-3.5 text-sky-600" />
-              <span>Console</span>
-            </Button>
-          </Link>
-
-          {/* Landing page CTA */}
-          {pathname === "/" && (
-            <Link href="/meeting" className="hidden sm:inline-block">
-              <Button variant="primary" size="sm">
-                <MonitorPlay className="h-3.5 w-3.5" />
-                <span>Start Meeting</span>
-              </Button>
+              Why IOMETE?
             </Link>
+            <Link
+              href="/architecture"
+              className="px-3.5 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-xl transition-colors"
+            >
+              Architecture
+            </Link>
+            <Link
+              href="/demo"
+              className="px-3.5 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-xl transition-colors"
+            >
+              Platform Tour
+            </Link>
+            <Link
+              href="/competitors"
+              className="px-3.5 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-xl transition-colors"
+            >
+              Comparison
+            </Link>
+            <Link
+              href="/learn"
+              className="px-3.5 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-xl transition-colors"
+            >
+              Expert Videos
+            </Link>
+          </nav>
+        ) : (
+          <div className="hidden md:flex items-center gap-2 text-xs text-slate-500">
+            <Link href="/overview" className="hover:text-slate-900 font-medium">
+              DealBridge Workspace
+            </Link>
+            <ChevronRight className="h-3 w-3 text-slate-300" />
+            <span className="font-semibold text-slate-900 capitalize">
+              {pathname.replace("/", "").replace(/-/g, " ") || "Overview"}
+            </span>
+          </div>
+        )}
+
+        {/* Right Action Area */}
+        <div className="flex items-center gap-2.5">
+          {isLandingPage ? (
+            <>
+              <Link
+                href="/why-iomete"
+                className="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 px-3 py-2 rounded-xl hover:bg-slate-50 transition-colors"
+              >
+                Explore Story
+              </Link>
+              <Link
+                href="/overview"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold shadow-sm shadow-sky-600/20 transition-all hover:shadow"
+              >
+                <span>Get Started</span>
+                <ChevronRight className="h-3.5 w-3.5" />
+              </Link>
+            </>
+          ) : (
+            <>
+              {/* Optional Seller Meeting Tools Drawer Toggle */}
+              <button
+                onClick={() => setIsNotesOpen(!isNotesOpen)}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border transition-colors ${
+                  isNotesOpen
+                    ? "bg-sky-50 border-sky-300 text-sky-700 font-semibold"
+                    : "bg-white border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                }`}
+                title="Toggle optional sales meeting tools & notes"
+              >
+                <FileText className="h-3.5 w-3.5 text-sky-600" />
+                <span className="hidden sm:inline">Meeting Tools</span>
+              </button>
+
+              <Link
+                href="/"
+                className="text-xs text-slate-500 hover:text-slate-800 px-2.5 py-1.5 rounded-lg hover:bg-slate-50 transition-colors"
+              >
+                Home
+              </Link>
+            </>
           )}
 
-          {/* Mobile hamburger menu */}
+          {/* Mobile hamburger menu toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 rounded-lg text-slate-600 hover:bg-slate-100 border border-slate-200"
+            className="md:hidden p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl"
+            aria-label="Toggle mobile menu"
           >
             {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
@@ -156,44 +166,38 @@ export function Navbar() {
 
       {/* Mobile navigation drawer */}
       {mobileMenuOpen && (
-        <div className="lg:hidden border-t border-slate-200 bg-white px-4 pt-3 pb-6 space-y-2 animate-in slide-in-from-top duration-150">
-          <div className="p-2 mb-2 bg-slate-50 rounded-xl flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-600">Active View Mode</span>
-            <div className="flex gap-1">
-              <button
-                onClick={() => setRole("seller")}
-                className={`px-2 py-1 text-xs rounded-md ${
-                  role === "seller" ? "bg-sky-600 text-white" : "text-slate-600"
-                }`}
-              >
-                Seller
-              </button>
-              <button
-                onClick={() => setRole("buyer")}
-                className={`px-2 py-1 text-xs rounded-md ${
-                  role === "buyer" ? "bg-emerald-600 text-white" : "text-slate-600"
-                }`}
-              >
-                Buyer
-              </button>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-1.5">
-            {navLinks.map((link) => (
+        <div className="md:hidden border-t border-slate-200 bg-white px-4 py-4 space-y-2 shadow-lg">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-2">
+            Navigation
+          </p>
+          {navLinks.map((link) => {
+            const isActive = pathname === link.href;
+            return (
               <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className={`px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
-                  pathname === link.href
+                className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-colors ${
+                  isActive
                     ? "bg-sky-50 text-sky-700 font-semibold"
-                    : "text-slate-600 hover:bg-slate-50"
+                    : "text-slate-700 hover:bg-slate-50"
                 }`}
               >
-                {link.label}
+                <span>{link.label}</span>
+                <ChevronRight className="h-3.5 w-3.5 text-slate-300" />
               </Link>
-            ))}
+            );
+          })}
+          <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
+            <Link
+              href="https://iomete.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[11px] text-sky-600 flex items-center gap-1 font-semibold"
+            >
+              <span>Visit iomete.com</span>
+              <ExternalLink className="h-3 w-3" />
+            </Link>
           </div>
         </div>
       )}

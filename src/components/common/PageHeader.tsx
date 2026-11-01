@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/Badge";
 
 interface PageHeaderProps {
   badge?: string;
+  badgeText?: string;
   badgeVariant?: "default" | "secondary" | "success" | "warning" | "indigo";
   title: string;
   subtitle?: string;
@@ -14,6 +15,7 @@ interface PageHeaderProps {
 
 export function PageHeader({
   badge,
+  badgeText,
   badgeVariant = "default",
   title,
   subtitle,
@@ -21,6 +23,7 @@ export function PageHeader({
   breadcrumbs,
   className,
 }: PageHeaderProps) {
+  const displayBadge = badge || badgeText;
   return (
     <div className={cn("pb-6 mb-6 border-b border-slate-200/80", className)}>
       {breadcrumbs && breadcrumbs.length > 0 && (
@@ -42,10 +45,10 @@ export function PageHeader({
 
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div className="space-y-1.5 max-w-3xl">
-          {badge && (
+          {displayBadge && (
             <div className="mb-2">
               <Badge variant={badgeVariant} size="sm">
-                {badge}
+                {displayBadge}
               </Badge>
             </div>
           )}
