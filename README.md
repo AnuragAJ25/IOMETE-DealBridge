@@ -146,7 +146,7 @@ cp .env.example .env
 
 | Variable | Scope | Default | Description |
 |---|---|---|---|
-| `NEXT_PUBLIC_API_BASE_URL` | Frontend | `http://localhost:8000` | Base URL of the FastAPI backend service |
+| `NEXT_PUBLIC_API_URL` | Frontend | `http://localhost:8000` (dev only) | Base URL of the FastAPI backend service (e.g. `https://iomete-dealbridge-backend.onrender.com`) |
 | `GEMINI_API_KEY` | Backend | `""` (Empty string) | Google Gemini API key from Google AI Studio |
 | `GEMINI_MODEL` | Backend | `gemini-2.5-flash` | Gemini model (`gemini-2.5-flash`, `gemini-1.5-flash`) |
 | `CORS_ORIGINS` | Backend | `["http://localhost:3000"]` | Allowed frontend origins for CORS |
@@ -259,7 +259,7 @@ CMD ["npm", "start"]
 
 ### Option B: Cloud Deployment (Vercel + Cloud Run / Render)
 1. **Frontend**: Deploy Next.js to **Vercel** or **AWS Amplify**. Set the environment variable:
-   - `NEXT_PUBLIC_API_BASE_URL=https://your-backend-api.com`
+   - `NEXT_PUBLIC_API_URL=https://your-backend-api.com`
 2. **Backend**: Deploy FastAPI to **Google Cloud Run**, **AWS App Runner**, or **Render**. Set:
    - `GEMINI_API_KEY=your_actual_key`
    - `GEMINI_MODEL=gemini-2.5-flash`

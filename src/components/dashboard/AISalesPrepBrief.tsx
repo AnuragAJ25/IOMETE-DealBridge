@@ -108,7 +108,7 @@ export function AISalesPrepBrief() {
           </div>
           <p className="leading-relaxed text-amber-800">{error}</p>
           <div className="text-[11px] text-amber-700">
-            Ensure backend server is running on port 8000. Static seller
+            Ensure the backend API service is running and accessible. Static seller
             teleprompter notes remain available in the Presenter Console.
           </div>
         </div>

@@ -146,9 +146,8 @@ export function AIMeetingSummaryGenerator() {
           </div>
           <p className="leading-relaxed text-amber-800">{error}</p>
           <div className="text-[11px] text-amber-700">
-            Ensure the FastAPI backend server is running on port 8000 and has a
-            valid GEMINI_API_KEY set. The static Mutual Action Plan below
-            remains fully accessible.
+            Ensure the backend API service is running and accessible. The
+            static Mutual Action Plan below remains fully accessible.
           </div>
         </div>
       )}

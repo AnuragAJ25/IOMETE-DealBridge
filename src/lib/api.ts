@@ -5,12 +5,6 @@
  * and robust error normalization.
  */
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
-
-const DEFAULT_TIMEOUT_MS = 25000; // 25 seconds for LLM inference
-const MAX_RETRIES = 1;
-
 export class ApiError extends Error {
   status: number;
   details?: unknown;
@@ -21,6 +15,47 @@ export class ApiError extends Error {
     this.status = status;
     this.details = details;
   }
+}
+
+/**
+ * Returns the resolved API base URL.
+ * - Prioritizes process.env.NEXT_PUBLIC_API_URL (with NEXT_PUBLIC_API_BASE_URL as legacy fallback).
+ * - Strips trailing slashes and normalizes away trailing '/api'.
+ * - In local development: Falls back to http://localhost:8000 if not configured.
+ * - In production: Throws a clear configuration error if missing (NEVER falls back to localhost:8000).
+ */
+export function getApiBaseUrl(): string {
+  const envUrl =
+    process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_API_BASE_URL;
+
+  if (envUrl && envUrl.trim()) {
+    let clean = envUrl.trim().replace(/\/+$/, "");
+    if (clean.endsWith("/api")) {
+      clean = clean.slice(0, -4);
+    }
+    return clean;
+  }
+
+  // Allow localhost:8000 ONLY in local development or test environments
+  if (process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test") {
+    return "http://localhost:8000";
+  }
+
+  // In production, NEVER fall back to localhost:8000. Require NEXT_PUBLIC_API_URL.
+  throw new ApiError(
+    500,
+    "Configuration Error: NEXT_PUBLIC_API_URL environment variable is missing in production. " +
+      "Please configure NEXT_PUBLIC_API_URL=https://iomete-dealbridge-backend.onrender.com in your deployment environment variables (e.g. on Netlify)."
+  );
+}
+
+/**
+ * Builds a strongly-typed, normalized absolute URL for an API endpoint.
+ */
+export function buildApiUrl(endpoint: string): string {
+  const baseUrl = getApiBaseUrl();
+  const safeEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+  return `${baseUrl}${safeEndpoint}`;
 }
 
 // ---------------------------------------------------------------------------
@@ -164,6 +199,9 @@ export interface KnowledgeAssistantResponse {
   needs_confirmation: boolean;
 }
 
+const DEFAULT_TIMEOUT_MS = 25000; // 25 seconds for LLM inference
+const MAX_RETRIES = 1;
+
 // ---------------------------------------------------------------------------
 // Fetch Helpers with Timeout & Retry
 // ---------------------------------------------------------------------------
@@ -199,7 +237,7 @@ async function apiPost<TRequest, TResponse>(
   body: TRequest,
   retries: number = MAX_RETRIES
 ): Promise<TResponse> {
-  const url = `${API_BASE_URL}${endpoint}`;
+  const url = buildApiUrl(endpoint);
   let lastError: Error | null = null;
 
   for (let attempt = 0; attempt <= retries; attempt++) {
@@ -253,16 +291,20 @@ async function apiPost<TRequest, TResponse>(
   }
 
   if (lastError instanceof ApiError) throw lastError;
+  const isLocal = url.includes("localhost") || url.includes("127.0.0.1");
+  const hostGuidance = isLocal
+    ? "Please ensure the local FastAPI server is running on port 8000."
+    : "Please verify that the remote backend service is active and accessible.";
   throw new ApiError(
     0,
-    `Unable to connect to backend service at ${url}. Please ensure the FastAPI server is running on port 8000. (${
+    `Unable to connect to backend service at ${url}. ${hostGuidance} (${
       (lastError as Error)?.message || "Unknown error"
     })`
   );
 }
 
 async function apiGet<TResponse>(endpoint: string): Promise<TResponse> {
-  const url = `${API_BASE_URL}${endpoint}`;
+  const url = buildApiUrl(endpoint);
   try {
     const res = await fetchWithTimeout(
       url,
@@ -278,9 +320,13 @@ async function apiGet<TResponse>(endpoint: string): Promise<TResponse> {
     return (await res.json()) as TResponse;
   } catch (error: any) {
     if (error instanceof ApiError) throw error;
+    const isLocal = url.includes("localhost") || url.includes("127.0.0.1");
+    const hostGuidance = isLocal
+      ? "Is the local FastAPI server running on port 8000?"
+      : "Is the remote backend service accessible?";
     throw new ApiError(
       0,
-      `Network connection failed to ${url}. Is FastAPI running? (${error.message})`
+      `Network connection failed to ${url}. ${hostGuidance} (${error.message})`
     );
   }
 }
@@ -289,6 +335,9 @@ async function apiGet<TResponse>(endpoint: string): Promise<TResponse> {
 // Exported Client API
 // ---------------------------------------------------------------------------
 export const apiClient = {
+  getBaseUrl: (): string => getApiBaseUrl(),
+  getAssistantEndpoint: (): string => buildApiUrl("/api/ai/assistant"),
+
   checkHealth: (): Promise<HealthResponse> => apiGet<HealthResponse>("/health"),
 
   generateProductExplainer: (
